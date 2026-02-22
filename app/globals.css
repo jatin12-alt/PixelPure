@@ -1,0 +1,384 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   Google Fonts Import
+───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ─────────────────────────────────────────────
+   CSS Variables / Design Tokens
+───────────────────────────────────────────── */
+:root {
+  --background: 0 0% 0%;
+  --foreground: 210 40% 98%;
+  --card: 222 84% 5%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 84% 5%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 186 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 263 70% 56%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 263 70% 56%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 186 100% 50%;
+  --radius: 0.75rem;
+  
+  /* Brand Custom */
+  --cyan: #00F2FF;
+  --purple: #7C3AED;
+  --neon-purple: #A855F7;
+  --surface-0: #000000;
+  --surface-1: #0A0A0F;
+  --surface-2: #0D0D15;
+  --surface-3: #12121E;
+  --surface-4: #1A1A2E;
+}
+
+/* ─────────────────────────────────────────────
+   Global Reset & Base
+───────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: #000000;
+  color: #F8FAFC;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────────
+   Premium Custom Scrollbar
+───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0F;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00F2FF44, #7C3AED44);
+  border-radius: 999px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00F2FF88, #7C3AED88);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #00F2FF44 #0A0A0F;
+}
+
+/* ─────────────────────────────────────────────
+   Selection Styling
+───────────────────────────────────────────── */
+::selection {
+  background: #00F2FF33;
+  color: #00F2FF;
+}
+
+/* ─────────────────────────────────────────────
+   Focus Styles
+───────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #00F2FF;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   Utility Layer
+───────────────────────────────────────────── */
+@layer utilities {
+  /* Glass morphism */
+  .glass {
+    background: rgba(13, 13, 21, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-cyan {
+    background: rgba(0, 242, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 242, 255, 0.15);
+  }
+
+  .glass-purple {
+    background: rgba(124, 58, 237, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+  }
+
+  /* Text gradients */
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, #00F2FF, #7C3AED);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-purple {
+    background: linear-gradient(135deg, #7C3AED, #A855F7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-white {
+    background: linear-gradient(135deg, #FFFFFF, #94A3B8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Glow effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3), 0 0 60px rgba(0, 242, 255, 0.1);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3), 0 0 60px rgba(124, 58, 237, 0.1);
+  }
+
+  .glow-text-cyan {
+    text-shadow: 0 0 20px rgba(0, 242, 255, 0.6), 0 0 40px rgba(0, 242, 255, 0.3);
+  }
+
+  /* Gradient borders */
+  .border-gradient-cyan {
+    border: 1px solid;
+    border-image: linear-gradient(135deg, #00F2FF, #7C3AED) 1;
+  }
+
+  /* Shimmer animation helper */
+  .shimmer-bg {
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 60%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  /* Noise texture overlay */
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Card styles */
+  .card-premium {
+    background: rgba(13, 13, 21, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .card-premium:hover {
+    border-color: rgba(0, 242, 255, 0.2);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 242, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Component Layer
+───────────────────────────────────────────── */
+@layer components {
+  /* Button Base */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 
+           text-sm font-semibold text-black rounded-xl overflow-hidden
+           transition-all duration-300 cursor-pointer select-none;
+    background: linear-gradient(135deg, #00F2FF, #0EA5E9);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.5), 0 0 60px rgba(0, 242, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3
+           text-sm font-semibold rounded-xl overflow-hidden
+           transition-all duration-300 cursor-pointer select-none;
+    background: rgba(124, 58, 237, 0.15);
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    color: #A855F7;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(124, 58, 237, 0.25);
+    border-color: rgba(124, 58, 237, 0.7);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+  }
+
+  .btn-ghost {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3
+           text-sm font-medium text-slate-300 rounded-xl
+           transition-all duration-300 cursor-pointer select-none;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #F8FAFC;
+  }
+
+  /* Input Base */
+  .input-premium {
+    @apply w-full px-4 py-3 text-sm text-slate-200 rounded-xl outline-none
+           transition-all duration-300;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .input-premium:focus {
+    border-color: rgba(0, 242, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(0, 242, 255, 0.1);
+    background: rgba(0, 242, 255, 0.03);
+  }
+
+  .input-premium::placeholder {
+    color: rgba(148, 163, 184, 0.5);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Ambient Background Glow
+───────────────────────────────────────────── */
+.ambient-purple {
+  position: fixed;
+  top: -20%;
+  left: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-cyan {
+  position: fixed;
+  bottom: -20%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 242, 255, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─────────────────────────────────────────────
+   Scan-Line Laser Component Styles
+───────────────────────────────────────────── */
+.scan-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.scan-before {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(3px) grayscale(0.5) brightness(0.7);
+}
+
+.scan-after {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.05s linear;
+}
+
+.scan-laser {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    rgba(0, 242, 255, 0.8) 20%, 
+    rgba(0, 242, 255, 1) 50%, 
+    rgba(0, 242, 255, 0.8) 80%, 
+    transparent 100%
+  );
+  box-shadow: 
+    0 0 10px rgba(0, 242, 255, 0.8),
+    0 0 30px rgba(0, 242, 255, 0.4),
+    0 0 60px rgba(0, 242, 255, 0.2),
+    -20px 0 40px rgba(0, 242, 255, 0.1);
+  will-change: transform;
+}
+
+/* ─────────────────────────────────────────────
+   Page Transition
+───────────────────────────────────────────── */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}

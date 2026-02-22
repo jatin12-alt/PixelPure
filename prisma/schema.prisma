@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Ye line add karo
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum Plan {
+  FREE
+  PRO
+  BUSINESS
+}
+
+enum ImageStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ─────────────────────────────────────────────
+// User Model
+// ─────────────────────────────────────────────
+
+model User {
+  id               String   @id @default(cuid())
+  clerkId          String   @unique
+  email            String   @unique
+  name             String?
+  imageUrl         String?
+  plan             Plan     @default(FREE)
+  credits          Int      @default(3)
+  razorpayCustomerId String?  @unique
+  razorpayOrderId    String?  @unique
+  razorpayPaymentId  String?  @unique
+  referralCode     String?  @unique
+  referredBy       String?  // referralCode of the referrer
+  totalReferrals   Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  images           Image[]
+  subscriptions    Subscription[]
+  referrals        Referral[]     @relation("ReferrerUser")
+  referredByUser   Referral[]     @relation("ReferredUser")
+
+  @@index([clerkId])
+  @@index([email])
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// Image Enhancement Model
+// ─────────────────────────────────────────────
+
+model Image {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  originalUrl   String
+  enhancedUrl   String?
+  thumbnailUrl  String?
+  fileName      String?
+  fileSize      Int?         // in bytes
+  width         Int?
+  height        Int?
+  status        ImageStatus  @default(PROCESSING)
+  enhancementType String?   // e.g. "face-restore", "upscale-4x", "denoise"
+  creditsUsed   Int          @default(1)
+  processingMs  Int?         // time taken in ms
+  replicateId   String?      // Replicate prediction ID
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ─────────────────────────────────────────────
+// Subscription Model
+// ─────────────────────────────────────────────
+
+model Subscription {
+  id                  String    @id @default(cuid())
+  userId              String
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  razorpaySubscriptionId String?  @unique
+  razorpayOrderId    String?  @unique
+  razorpayPaymentId  String?  @unique
+  razorpaySignature  String?
+  plan                Plan      @default(FREE)
+  status              String    @default("active") // active, canceled, past_due
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([razorpaySubscriptionId])
+  @@index([razorpayOrderId])
+}
+
+// ─────────────────────────────────────────────
+// Waitlist Model (Video AI - Coming Soon)
+// ─────────────────────────────────────────────
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  feature   String   @default("video-ai") // video-ai, batch-processing, api-access
+  position  Int?     // waitlist position
+  notified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([feature])
+}
+
+// ─────────────────────────────────────────────
+// Referral System Model
+// ─────────────────────────────────────────────
+
+model Referral {
+  id           String   @id @default(cuid())
+  referrerId   String
+  referrer     User     @relation("ReferrerUser", fields: [referrerId], references: [id])
+  referredId   String
+  referred     User     @relation("ReferredUser", fields: [referredId], references: [id])
+  creditsGiven Int      @default(5) // credits given to referrer
+  createdAt    DateTime @default(now())
+
+  @@unique([referrerId, referredId])
+  @@index([referrerId])
+  @@index([referredId])
+}
