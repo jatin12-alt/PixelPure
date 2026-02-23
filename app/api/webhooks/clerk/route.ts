@@ -162,7 +162,46 @@ export async function POST(req: Request) {
           ? await generateUniqueReferralCode()
           : undefined;
 
+        // Prepare user data for database
+        const userData = {
+          clerkId: id,
+          email: email,
+          name: fullName,
+          imageUrl: image_url || null,
+          plan: 'FREE' as const,
+          credits: 3,
+          referralCode: referralCode,
+        };
+
+        // Log the data we're about to save
+        console.log('[WEBHOOK] User saving to DB:', {
+          userData,
+          eventType,
+          isCreate: eventType === 'user.created',
+          isUpdate: eventType === 'user.updated',
+          timestamp: new Date().toISOString(),
+        });
+
+        // Verify DATABASE_URL is set
+        if (!process.env.DATABASE_URL) {
+          console.error('[WEBHOOK ERROR] DATABASE_URL is not set in environment variables');
+          return NextResponse.json(
+            { error: 'Database URL not configured', timestamp: new Date().toISOString() },
+            { status: 500 }
+          );
+        }
+
+        // Log DATABASE_URL info (without exposing the actual connection string)
+        console.log('[WEBHOOK] Database connection info:', {
+          hasDatabaseUrl: !!process.env.DATABASE_URL,
+          databaseUrlPrefix: process.env.DATABASE_URL?.substring(0, 20) + '...',
+          hasDirectUrl: !!process.env.DIRECT_URL,
+          prismaClientInitialized: !!prisma,
+          timestamp: new Date().toISOString(),
+        });
+
         // Upsert the user in the database
+        console.log('[WEBHOOK] Executing Prisma upsert operation...');
         const user = await prisma.user.upsert({
           where: { clerkId: id },
           update: {
@@ -179,6 +218,21 @@ export async function POST(req: Request) {
             credits: 3,
             referralCode: referralCode,
           }
+        });
+
+        // Log successful save with full user object
+        console.log('[WEBHOOK] User saved successfully:', {
+          createdUser: user,
+          userId: user.id,
+          clerkId: user.clerkId,
+          email: user.email,
+          name: user.name,
+          plan: user.plan,
+          credits: user.credits,
+          referralCode: user.referralCode,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          timestamp: new Date().toISOString(),
         });
 
         const duration = Date.now() - startTime;
