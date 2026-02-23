@@ -40,7 +40,8 @@ export async function POST(req: Request) {
 
     // YAHAN HAI ASLI KHEL - Extracting data without letting TS cry
     if (eventType === 'user.created' || eventType === 'user.updated') {
-      const data = evt.data as any; // Sabse bada 'any' ka hathiyar
+      // @ts-ignore - This tells TypeScript to shut up for the next line
+      const data: any = evt.data; 
       
       const id = data.id;
       const email_addresses = data.email_addresses;
@@ -48,8 +49,11 @@ export async function POST(req: Request) {
       const first_name = data.first_name;
       const last_name = data.last_name;
 
-      if (!id) return new Response('No ID', { status: 400 });
-
+      if (!id) {
+        return NextResponse.json({ error: 'No user ID' }, { status: 400 });
+      }
+      
+      // ... baaki logic (email extract wala)
       let email = "";
       if (email_addresses && email_addresses.length > 0) {
         email = email_addresses[0].email_address;
