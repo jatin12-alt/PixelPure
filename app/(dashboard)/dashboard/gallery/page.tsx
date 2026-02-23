@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ImageIcon, Filter } from "lucide-react";
+import { Image as ImageIcon, Filter } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Gallery",

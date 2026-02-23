@@ -35,4 +35,5 @@ declare module 'lucide-react' {
     export const Star: Icon;
     export const Building: Icon;
     export const ArrowRight: Icon;
+    export const Filter: Icon;
 }
