@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { User, Bell, CreditCard, Shield } from "lucide-react";
+import { User, BellRing as Bell, CreditCard, Shield } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Settings",

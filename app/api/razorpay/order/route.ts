@@ -1,10 +1,14 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { razorpay } from "@/lib/razorpay";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
     try {
+        // Build safety check: Agar keys dummy hain toh error handle karo
+        if (process.env.RAZORPAY_KEY_ID === "rzp_test_dummy" || !process.env.RAZORPAY_KEY_ID) {
+             return new NextResponse("Razorpay keys not configured", { status: 500 });
+        }
+
         const { userId } = await auth();
         const user = await currentUser();
 
@@ -19,7 +23,6 @@ export async function POST(req: Request) {
             return new NextResponse("Plan ID is required", { status: 400 });
         }
 
-        // Define plan prices in INR (paise)
         const planPrices: Record<string, { monthly: number; yearly: number }> = {
             pro: { monthly: 1599, yearly: 1199 },
             business: { monthly: 6599, yearly: 4999 },
@@ -32,9 +35,8 @@ export async function POST(req: Request) {
 
         const amount = isYearly ? plan.yearly * 12 : plan.monthly;
 
-        // Razorpay expects amount in paise (multiply by 100)
         const orderOptions = {
-            amount: amount * 100,
+            amount: amount * 100, // Paise
             currency: "INR",
             receipt: `receipt_${Date.now()}_${userId.substring(0, 10)}`,
             notes: {

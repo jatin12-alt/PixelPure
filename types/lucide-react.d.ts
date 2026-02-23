@@ -37,4 +37,16 @@ declare module 'lucide-react' {
     export const ArrowRight: Icon;
     export const Filter: Icon;
     export const Bell: Icon;
+    export const BellRing: Icon;
+    export const Upload: Icon;
+    export const Quote: Icon;
+    export const Twitter: Icon;
+    export const Github: Icon;
+    export const Linkedin: Icon;
+    export const Home: Icon;
+    export const ImageIcon: Icon;
+    export const ChevronRight: Icon;
+    export const Play: Icon;
+    export const Pause: Icon;
+    export const RotateCcw: Icon;
 }
