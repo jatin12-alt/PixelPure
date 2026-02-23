@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const svix_signature = headerPayload.get("svix-signature");
 
     if (!svix_id || !svix_timestamp || !svix_signature) {
-      return new Response('Error occured -- no svix headers', { status: 400 })
+      return new Response('Missing svix headers', { status: 400 })
     }
 
     const payload = await req.json()
@@ -33,29 +33,26 @@ export async function POST(req: Request) {
         "svix-signature": svix_signature,
       }) as WebhookEvent
     } catch (err) {
-      return new Response('Error occured', { status: 400 })
+      return new Response('Verification failed', { status: 400 })
     }
 
     const eventType = evt.type;
 
-    // YAHAN HAI ASLI KHEL - Extracting data without letting TS cry
     if (eventType === 'user.created' || eventType === 'user.updated') {
-      // @ts-ignore - This tells TypeScript to shut up for the next line
-      const data: any = evt.data; 
+      // @ts-ignore - TS ko bypass karne ka tarika
+      const rawData: any = evt.data; 
       
-      const id = data.id;
-      const email_addresses = data.email_addresses;
-      const image_url = data.image_url;
-      const first_name = data.first_name;
-      const last_name = data.last_name;
+      // Destructuring ki jagah direct access (Build pass karne ke liye)
+      const id = rawData.id;
+      const email_addresses = rawData.email_addresses;
+      const image_url = rawData.image_url;
+      const first_name = rawData.first_name;
+      const last_name = rawData.last_name;
 
-      if (!id) {
-        return NextResponse.json({ error: 'No user ID' }, { status: 400 });
-      }
-      
-      // ... baaki logic (email extract wala)
+      if (!id) return new Response('No ID', { status: 400 });
+
       let email = "";
-      if (email_addresses && email_addresses.length > 0) {
+      if (email_addresses && Array.isArray(email_addresses) && email_addresses.length > 0) {
         email = email_addresses[0].email_address;
       }
 
