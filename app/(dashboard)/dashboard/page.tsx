@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
-    title: "Dashboard Overview",
+    title: "Dashboard | PixelPure",
     description: "Monitor your AI image restoration usage and history",
 };
 
@@ -80,14 +80,20 @@ export default function DashboardPage() {
                         </Link>
                     </div>
 
-                    <div className="card-premium rounded-2xl p-8 text-center bg-surface-1">
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center text-text-muted">
-                                <Sparkles className="w-8 h-8 opacity-20" />
+                    <div className="card-premium rounded-2xl p-12 text-center bg-surface-1 border-white/5">
+                        <div className="flex flex-col items-center gap-6">
+                            <div className="w-20 h-20 rounded-3xl glass flex items-center justify-center text-text-muted/20">
+                                <Icons.Image className="w-10 h-10" />
                             </div>
-                            <p className="text-text-secondary">No recent activity found. Start by enhancing your first image!</p>
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-bold text-white">No images yet</h3>
+                                <p className="text-text-secondary max-w-xs mx-auto">Start by enhancing your first image in the AI Studio!</p>
+                            </div>
                             <Link href="/dashboard/studio">
-                                <Button variant="outline" size="sm">Go to Studio</Button>
+                                <Button variant="primary" size="lg" className="px-8">
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Go to Studio
+                                </Button>
                             </Link>
                         </div>
                     </div>

@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs"; // 1. Clerk import kiya
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({
@@ -105,6 +106,19 @@ export default function RootLayout({
 
                     {/* Main Content */}
                     <div className="relative z-10">{children}</div>
+
+                    <Toaster 
+                        theme="dark" 
+                        position="bottom-right" 
+                        toastOptions={{
+                            style: {
+                                background: "rgba(13, 13, 21, 0.8)",
+                                backdropFilter: "blur(12px)",
+                                border: "1px solid rgba(255, 255, 255, 0.1)",
+                                color: "white",
+                            },
+                        }}
+                    />
 
                     {/* Razorpay Script */}
                     <Script

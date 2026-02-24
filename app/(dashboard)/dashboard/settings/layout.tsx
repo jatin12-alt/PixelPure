@@ -19,6 +19,15 @@ export default function SettingsLayout({
 }) {
     const pathname = usePathname();
 
+    React.useEffect(() => {
+        const currentLink = settingsNav.find(link => link.href === pathname);
+        if (currentLink) {
+            document.title = `${currentLink.label} | PixelPure`;
+        } else {
+            document.title = "Settings | PixelPure";
+        }
+    }, [pathname]);
+
     return (
         <div className="max-w-6xl mx-auto space-y-8">
             <div>

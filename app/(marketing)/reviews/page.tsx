@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import TestimonialsSection from "@/components/marketing/TestimonialsSection";
 
 export const metadata: Metadata = {
-    title: "Reviews",
+    title: "Reviews | PixelPure",
     description:
         "See what thousands of users say about PixelPure's AI image restoration.",
 };

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PricingSection from "@/components/marketing/PricingSection";
 
 export const metadata: Metadata = {
-    title: "Pricing",
+    title: "Pricing | PixelPure",
     description:
         "Simple, transparent pricing for AI image restoration. Start free, scale as you grow.",
 };

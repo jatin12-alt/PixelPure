@@ -1,10 +1,15 @@
 "use client";
 
-import { useState, useRef, ChangeEvent, MouseEvent } from "react";
+import { useState, useRef, ChangeEvent, MouseEvent, useEffect } from "react";
 import * as Icons from "lucide-react";
 import ScanReveal from "@/components/ui/ScanReveal";
+import { toast } from "sonner";
 
 export default function StudioPage() {
+    useEffect(() => {
+        document.title = "Studio | PixelPure";
+    }, []);
+
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [originalFile, setOriginalFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -47,16 +52,42 @@ export default function StudioPage() {
             const secureUrl = data.secure_url;
 
             // Apply AI restoration filter e_gen_restore
-            // Cloudinary transformation URL structure: .../upload/t_transformation/v123/public_id.jpg
-            // Or more directly: .../upload/e_gen_restore/v123/public_id.jpg
             const restored = secureUrl.replace("/upload/", "/upload/e_gen_restore/");
 
             setOriginalUrl(secureUrl);
             setRestoredUrl(restored);
+            toast.success("Image restored successfully!", {
+                description: "Your HD version is ready for download.",
+            });
         } catch (error) {
             console.error("Restoration error:", error);
+            toast.error("Restoration failed", {
+                description: "Please check your connection and try again.",
+            });
         } finally {
             setIsUploading(false);
+        }
+    };
+
+    const handleDownload = async () => {
+        if (!restoredUrl) return;
+
+        try {
+            toast.loading("Preparing download...", { id: "download-toast" });
+            const response = await fetch(restoredUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `pixelpure-restored-${Date.now()}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            toast.success("Download started!", { id: "download-toast" });
+        } catch (error) {
+            console.error("Download error:", error);
+            toast.error("Download failed", { id: "download-toast" });
         }
     };
 
@@ -113,10 +144,8 @@ export default function StudioPage() {
                                 >
                                     Start New
                                 </button>
-                                <a
-                                    href={restoredUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <button
+                                    onClick={handleDownload}
                                     className="px-6 py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:scale-105 active:scale-95"
                                     style={{
                                         background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
@@ -124,7 +153,7 @@ export default function StudioPage() {
                                     }}
                                 >
                                     Download HD
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>

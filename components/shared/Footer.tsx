@@ -99,14 +99,21 @@ export default function Footer() {
                     ))}
                 </div>
 
-                {/* Bottom Bar */}
-                <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-text-muted text-sm">
-                        © {new Date().getFullYear()} PixelPure. All rights reserved.
+                {/* Bottom Section */}
+                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="text-text-muted text-xs font-medium">
+                        © {new Date().getFullYear()} PixelPure AI. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span className="text-xs text-text-muted">All systems operational</span>
+                    <div className="flex items-center gap-6">
+                        <Link href="/privacy" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                            Privacy Policy
+                        </Link>
+                        <Link href="/terms" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                            Terms of Service
+                        </Link>
+                        <Link href="/contact" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                            Contact Support
+                        </Link>
                     </div>
                 </div>
             </div>
