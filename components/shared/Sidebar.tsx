@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -10,8 +11,9 @@ import {
     CreditCard,
     Share2,
     ChevronRight,
-    Zap,
+    Loader2,
     Gift,
+    ArrowLeft,
 } from "lucide-react";
 
 const navItems = [
@@ -40,6 +42,22 @@ const navItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const [credits, setCredits] = useState<number | null>(null);
+
+    useEffect(() => {
+        const fetchCredits = async () => {
+            try {
+                const res = await fetch("/api/user/credits");
+                if (res.ok) {
+                    const data = await res.json();
+                    setCredits(data.credits);
+                }
+            } catch (error) {
+                console.error("Sidebar credits error:", error);
+            }
+        };
+        fetchCredits();
+    }, [pathname]); // Refresh when navigating
 
     return (
         <aside className="hidden md:flex w-64 flex-col h-full border-r border-white/5 bg-surface-1">
@@ -53,7 +71,7 @@ export default function Sidebar() {
                             boxShadow: "0 0 20px rgba(0, 242, 255, 0.35)",
                         }}
                     >
-                        <Sparkles className="w-4 h-4 text-black" strokeWidth={2.5} />
+                        <Loader2 className="w-4 h-4 text-black" strokeWidth={2.5} />    
                     </div>
                     <span
                         className="text-xl font-black tracking-tight"
@@ -68,8 +86,19 @@ export default function Sidebar() {
                 </Link>
             </div>
 
-            {/* Credits Card */}
+            {/* Back to Home/Studio Link */}
             <div className="px-4 pt-4">
+                <Link 
+                    href="/"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-text-muted hover:text-electric-cyan hover:bg-white/5 transition-all group"
+                >
+                    <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+                    Back to Home
+                </Link>
+            </div>
+
+            {/* Credits Card */}
+            <div className="px-4 pt-2">
                 <div
                     className="rounded-xl p-4 relative overflow-hidden"
                     style={{
@@ -79,7 +108,7 @@ export default function Sidebar() {
                 >
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                            <Zap className="w-4 h-4 text-electric-cyan" />
+                            <Loader2 className="w-4 h-4 text-electric-cyan" />
                             <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
                                 Credits
                             </span>
@@ -87,14 +116,14 @@ export default function Sidebar() {
                         <span className="text-xs font-bold text-electric-cyan">FREE</span>
                     </div>
                     <div className="flex items-end gap-2">
-                        <span className="text-3xl font-black text-text-primary">10</span>
+                        <span className="text-3xl font-black text-text-primary">{credits ?? "..."}</span>
                         <span className="text-text-muted text-sm mb-1">/ 10 remaining</span>
                     </div>
                     <div className="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
                         <div
                             className="h-full rounded-full"
                             style={{
-                                width: "100%",
+                                width: `${((credits ?? 0) / 10) * 100}%`,
                                 background: "linear-gradient(90deg, #00F2FF, #7C3AED)",
                             }}
                         />
@@ -107,7 +136,7 @@ export default function Sidebar() {
                             color: "#000",
                         }}
                     >
-                        <Zap className="w-3.5 h-3.5" />
+                        <Loader2 className="w-3.5 h-3.5" />
                         Get More Credits
                     </Link>
                 </div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
-import { Check, Zap, Star, Building } from "lucide-react";
+import { Check, Zap, Star, Building, Loader2 } from "lucide-react";
 
 const plans = [
     {
@@ -16,7 +16,7 @@ const plans = [
         yearlyPrice: 0,
         description: "Perfect for trying PixelPure",
         features: [
-            "3 free image enhancements",
+            "10 free image enhancements",
             "Face restoration",
             "Basic upscaling (2×)",
             "JPG/PNG export",
@@ -32,7 +32,7 @@ const plans = [
     {
         id: "pro",
         name: "Pro",
-        icon: Zap,
+        icon: Loader2,
         monthlyPrice: 1599,
         yearlyPrice: 1199,
         description: "For serious creators & photographers",
@@ -176,7 +176,7 @@ export default function PricingSection({ fullPage }: PricingSectionProps) {
                             color: "#00F2FF",
                         }}
                     >
-                        <Zap className="w-3.5 h-3.5" />
+                        <Loader2 className="w-3.5 h-3.5" />
                         Simple Pricing
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black mb-4 text-white">

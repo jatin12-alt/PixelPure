@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, ArrowRight, Zap, LayoutDashboard } from "lucide-react";
+import { Loader2, ArrowRight, Zap, LayoutDashboard } from "lucide-react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function CTASection() {
@@ -33,7 +33,7 @@ export default function CTASection() {
                                     background: "linear-gradient(135deg, #00F2FF, #7C3AED)",
                                 }}
                             >
-                                <Sparkles className="w-8 h-8 text-black" strokeWidth={2.5} />
+                                <Loader2 className="w-8 h-8 text-black" strokeWidth={2.5} />
                             </div>
                         </div>
 
@@ -50,21 +50,21 @@ export default function CTASection() {
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                             <SignedOut>
                                 <Link
-                                    href="/sign-up"
+                                    href="/dashboard/studio"
                                     className="relative inline-flex items-center gap-2.5 px-8 py-4 text-lg font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105"
                                     style={{
                                         background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
                                         boxShadow: "0 0 30px rgba(0, 242, 255, 0.4)",
                                     }}
                                 >
-                                    <Zap className="w-5 h-5" />
+                                    <Loader2 className="w-5 h-5" />
                                     Get Started Free
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
                             </SignedOut>
                             <SignedIn>
                                 <Link
-                                    href="/dashboard"
+                                    href="/dashboard/studio"
                                     className="relative inline-flex items-center gap-2.5 px-8 py-4 text-lg font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105"
                                     style={{
                                         background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
@@ -72,7 +72,7 @@ export default function CTASection() {
                                     }}
                                 >
                                     <LayoutDashboard className="w-5 h-5" />
-                                    Go to Dashboard
+                                    Go to Studio
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
                             </SignedIn>
@@ -85,7 +85,7 @@ export default function CTASection() {
                         </div>
 
                         <p className="text-text-muted text-sm">
-                            Free forever plan with 3 monthly credits · No credit card required
+                            Free forever plan with 10 monthly credits · No credit card required
                         </p>
                     </div>
                 </div>

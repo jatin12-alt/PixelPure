@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import * as Icons from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
@@ -20,7 +20,7 @@ export default function GalleryPage() {
                     </p>
                 </div>
                 <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-text-secondary hover:text-white transition-all">
-                    <Icons.Filter className="w-4 h-4" />
+                    <Loader2 className="w-4 h-4" />
                     Filter
                 </button>
             </div>
@@ -30,10 +30,10 @@ export default function GalleryPage() {
                 <div className="flex flex-col items-center gap-8">
                     <div className="relative">
                         <div className="w-24 h-24 rounded-3xl glass flex items-center justify-center glow-cyan">
-                            <Icons.Image className="w-10 h-10 text-text-muted/40" strokeWidth={1.5} />
+                            <Loader2 className="w-10 h-10 text-text-muted/40" strokeWidth={1.5} /> 
                         </div>
                         <div className="absolute -right-2 -bottom-2 w-10 h-10 rounded-2xl glass-purple flex items-center justify-center glow-purple animate-bounce-subtle">
-                            <Icons.Sparkles className="w-5 h-5 text-neon-purple" />
+                            <Loader2 className="w-5 h-5 text-neon-purple" />
                         </div>
                     </div>
                     
@@ -48,7 +48,7 @@ export default function GalleryPage() {
 
                     <Link href="/dashboard/studio">
                         <Button variant="primary" size="lg" className="px-10 font-bold h-14 rounded-2xl">
-                            <Icons.Zap className="w-5 h-5 mr-2" />
+                            <Loader2 className="w-5 h-5 mr-2" />
                             Start Restoring
                         </Button>
                     </Link>

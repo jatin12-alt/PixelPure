@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useRef, ChangeEvent, MouseEvent, useEffect } from "react";
-import * as Icons from "lucide-react";
+import { Bell, Loader2, Upload, Zap } from "lucide-react";
 import ScanReveal from "@/components/ui/ScanReveal";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function StudioPage() {
+    const router = useRouter();
     useEffect(() => {
         document.title = "Studio | PixelPure";
         fetchCredits();
@@ -72,19 +74,20 @@ export default function StudioPage() {
             const data = await response.json();
             const secureUrl = data.secure_url;
 
-            // Apply Aggressive AI restoration filter string with cache busting
-            const restored = secureUrl.replace("/upload/", `/upload/e_gen_restore,e_improve,e_saturation:40,e_sharpen:100/v${Date.now()}/`);
+            // Apply Advanced AI Chaining: Restore -> Upscale -> Enhance -> Improve with cache busting
+            const restored = secureUrl.replace("/upload/", `/upload/e_gen_restore/e_upscale/e_enhance/e_improve/v${Date.now()}/`);
 
             // Deduct 1 credit
             const creditRes = await fetch("/api/user/credits", { method: "POST" });
             if (!creditRes.ok) {
                 if (creditRes.status === 403) {
-                    throw new Error("Insufficient credits");
+                    throw new Error("You have run out of credits!");
                 }
                 throw new Error("Credit deduction failed");
             }
             const creditData = await creditRes.json();
             setCredits(creditData.credits);
+            router.refresh();
 
             setOriginalUrl(secureUrl);
             setRestoredUrl(restored);
@@ -162,7 +165,7 @@ export default function StudioPage() {
                         <div className="p-6 flex items-center justify-between bg-white/[0.02]">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl glass-cyan flex items-center justify-center">
-                                    <Icons.Sparkles className="w-5 h-5 text-electric-cyan" />
+                                    <Bell className="w-5 h-5 text-electric-cyan" /> 
                                 </div>
                                 <div>
                                     <p className="text-white font-bold">Restoration Complete</p>
@@ -207,7 +210,7 @@ export default function StudioPage() {
                         {!selectedImage ? (
                             <div className="flex flex-col items-center gap-6">
                                 <div className="w-24 h-24 rounded-2xl glass-cyan flex items-center justify-center glow-cyan transition-transform duration-500 group-hover:scale-110">
-                                    <Icons.Upload className="w-10 h-10 text-electric-cyan" strokeWidth={1.5} />
+                                    <Upload className="w-10 h-10 text-electric-cyan" strokeWidth={1.5} />
                                 </div>
                                 <div className="space-y-2">
                                     <h2 className="text-2xl font-bold text-text-primary">
@@ -225,7 +228,7 @@ export default function StudioPage() {
                                         boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
                                     }}
                                 >
-                                    <Icons.Sparkles className="w-4 h-4" />
+                                    <Zap className="w-4 h-4" />
                                     Choose Image
                                 </button>
                             </div>
@@ -249,7 +252,9 @@ export default function StudioPage() {
                                     onClick={removeImage}
                                     className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-red-500/80 transition-all duration-300 z-10"
                                 >
-                                    <Icons.X className="w-5 h-5" />
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
                                 </button>
                             </div>
                         )}
@@ -262,19 +267,25 @@ export default function StudioPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     {[
                         {
-                            icon: Icons.Sparkles,
+                            icon: Zap,
                             title: "Face Restore",
                             desc: "Enhance facial features and details",
                             color: "cyan",
                         },
                         {
-                            icon: Icons.Zap,
+                            icon: Zap,
+                            title: "Enhance Now",
+                            desc: "Apply all enhancements to your image",
+                            color: "cyan",
+                        },
+                        {
+                            icon: Loader2,
                             title: "4x Upscale",
                             desc: "Increase resolution dramatically",
                             color: "purple",
                         },
                         {
-                            icon: Icons.Upload,
+                            icon: Upload,
                             title: "Denoise",
                             desc: "Remove grain and noise artifacts",
                             color: "cyan",
@@ -300,21 +311,26 @@ export default function StudioPage() {
             {/* Action Bar (Only visible when image is selected and not yet restored) */}
             {selectedImage && !restoredUrl && (
                 <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 animate-fade-up duration-500">
-                    <div className="glass-premium rounded-2xl p-4 border border-white/10 shadow-2xl flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                    <div className="glass-premium rounded-2xl p-4 border border-white/10 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 w-full sm:w-auto">
                             <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={selectedImage as string} alt="Thumb" className="w-full h-full object-cover" />
                             </div>
-                            <div className="min-w-0">
+                            <div className="min-w-0 flex-1 sm:flex-initial">
                                 <p className="text-xs font-medium text-text-secondary truncate">Ready to process</p>
-                                <p className="text-sm font-bold text-white">1 Credit required</p>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                    <p className="text-sm font-bold text-white whitespace-nowrap">1 Credit required</p>
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-text-muted">
+                                        {credits ?? 0} left
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <button
                             disabled={isUploading || (credits !== null && credits <= 0)}
                             onClick={handleUploadAndRestore}
-                            className="relative inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                            className="relative inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             style={{
                                 background: "linear-gradient(135deg, #00F2FF, #7C3AED)",
                                 boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
@@ -322,17 +338,17 @@ export default function StudioPage() {
                         >
                             {credits !== null && credits <= 0 ? (
                                 <>
-                                    <Icons.AlertCircle className="w-4 h-4" />
+                                    <Bell className="w-4 h-4" />
                                     No Credits
                                 </>
                             ) : isUploading ? (
                                 <>
-                                    <Icons.Loader2 className="w-4 h-4 animate-spin" />
+                                    <Loader2 className="w-4 h-4 animate-spin" />
                                     Restoring...
                                 </>
                             ) : (
                                 <>
-                                    <Icons.Zap className="w-4 h-4" />
+                                        <Zap className="w-4 h-4" />
                                     Enhance Now
                                 </>
                             )}

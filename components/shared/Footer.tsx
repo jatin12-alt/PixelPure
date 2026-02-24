@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Twitter, Github, Linkedin } from "lucide-react";
+import { Sparkles, Twitter, Github, Linkedin, Loader2 } from "lucide-react";
 
 const footerLinks = {
     Product: [
@@ -43,7 +43,7 @@ export default function Footer() {
                                     boxShadow: "0 0 20px rgba(0, 242, 255, 0.35)",
                                 }}
                             >
-                                <Sparkles className="w-4 h-4 text-black" strokeWidth={2.5} />
+                                <Loader2 className="w-4 h-4 text-black" strokeWidth={2.5} />
                             </div>
                             <span
                                 className="text-xl font-black tracking-tight"

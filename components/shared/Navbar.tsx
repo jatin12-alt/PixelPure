@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import * as Icons from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const navLinks = [
@@ -43,7 +43,7 @@ export default function Navbar() {
                                     boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
                                 }}
                             >
-                                <Icons.Sparkles className="w-4 h-4 text-black" strokeWidth={2.5} />
+                                <Loader2 className="w-4 h-4 text-black" strokeWidth={2.5} />
                             </div>
                             <span
                                 className="text-xl font-black tracking-tight"
@@ -87,7 +87,7 @@ export default function Navbar() {
                                     Sign In
                                 </Link>
                                 <Link
-                                    href="/sign-up"
+                                    href="/dashboard/studio"
                                     id="navbar-try-free-btn"
                                     className="relative inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-black rounded-xl overflow-hidden transition-all duration-300 group"
                                     style={{
@@ -103,7 +103,7 @@ export default function Navbar() {
                                             boxShadow: "0 0 40px rgba(0, 242, 255, 0.6)",
                                         }}
                                     />
-                                    <Icons.Zap className="w-4 h-4 relative z-10" strokeWidth={2.5} />
+                                    <Loader2 className="w-4 h-4 relative z-10" strokeWidth={2.5} />
                                     <span className="relative z-10">Try for Free</span>
                                 </Link>
                             </SignedOut>
@@ -112,7 +112,7 @@ export default function Navbar() {
                                     href="/dashboard"
                                     className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all"
                                 >
-                                    <Icons.LayoutDashboard className="w-4 h-4" />
+                                    <Loader2 className="w-4 h-4" />
                                     Dashboard
                                 </Link>
                                 <div className="pl-2 border-l border-white/10 ml-2">
@@ -123,6 +123,7 @@ export default function Navbar() {
 
                         {/* Mobile menu toggle */}
                         <button
+
                             type="button"
                             className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/5 transition-all"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -130,9 +131,13 @@ export default function Navbar() {
                             aria-expanded={mobileMenuOpen}
                         >
                             {mobileMenuOpen ? (
-                                <Icons.X className="w-5 h-5" />
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
                             ) : (
-                                <Icons.Menu className="w-5 h-5" />
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                                </svg>
                             )}
                         </button>
                     </div>
@@ -165,7 +170,7 @@ export default function Navbar() {
                                         Sign In
                                     </Link>
                                     <Link
-                                        href="/sign-up"
+                                        href="/dashboard/studio"
                                         onClick={() => setMobileMenuOpen(false)}
                                         id="mobile-try-free-btn"
                                         className="flex items-center justify-center px-4 py-4 rounded-2xl text-base font-bold text-black transition-all"
@@ -183,7 +188,9 @@ export default function Navbar() {
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl text-base font-medium text-white bg-white/5 border border-white/10"
                                     >
-                                        <Icons.LayoutDashboard className="w-5 h-5" />
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                        </svg>
                                         Dashboard
                                     </Link>
                                     <div className="flex items-center justify-between px-4 py-4 rounded-2xl bg-white/5 border border-white/10">

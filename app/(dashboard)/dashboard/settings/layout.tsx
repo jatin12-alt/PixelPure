@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Bell, CreditCard, Shield, ChevronRight } from "lucide-react";
+import { Bell, CreditCard, Loader2, Shield, User } from "lucide-react";
 
 const settingsNav = [
     { href: "/dashboard/settings/profile", label: "Profile", icon: User },
@@ -56,7 +56,7 @@ export default function SettingsLayout({
                                     <item.icon className="w-4 h-4" />
                                     <span className="text-sm font-medium">{item.label}</span>
                                 </div>
-                                {active && <ChevronRight className="w-4 h-4" />}
+                                {active && <div className="w-4 h-4" />}
                             </Link>
                         );
                     })}

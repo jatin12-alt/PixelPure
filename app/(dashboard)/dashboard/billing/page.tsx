@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CreditCard, Zap, CheckCircle2, AlertCircle, ArrowUpRight } from "lucide-react";
+import { CreditCard, Loader2, CheckCircle2, AlertCircle, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 
@@ -60,7 +60,7 @@ export default function BillingPage() {
                 {/* Credit Balance */}
                 <div className="card-premium rounded-3xl p-8 bg-surface-2 flex flex-col items-center justify-center text-center">
                     <div className="w-14 h-14 rounded-2xl glow-cyan flex items-center justify-center mb-6" style={{ background: 'rgba(0, 242, 255, 0.1)' }}>
-                        <Zap className="w-7 h-7 text-electric-cyan" />
+                        <Loader2 className="w-7 h-7 text-electric-cyan" />
                     </div>
                     <p className="text-text-muted text-sm font-medium">Credits Remaining</p>
                     <h3 className="text-5xl font-black text-white mt-2">10</h3>
