@@ -33,7 +33,7 @@ export default function BillingPage() {
                         <div className="space-y-4 mb-8">
                             <div className="flex items-center gap-3 text-text-secondary">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                                <span>3 Free credits per month</span>
+                                <span>10 Free credits per month</span>
                             </div>
                             <div className="flex items-center gap-3 text-text-secondary">
                                 <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -63,7 +63,7 @@ export default function BillingPage() {
                         <Zap className="w-7 h-7 text-electric-cyan" />
                     </div>
                     <p className="text-text-muted text-sm font-medium">Credits Remaining</p>
-                    <h3 className="text-5xl font-black text-white mt-2">3</h3>
+                    <h3 className="text-5xl font-black text-white mt-2">10</h3>
                     <p className="text-[10px] text-text-muted mt-4 uppercase tracking-widest">Resets in 12 days</p>
                     <Button variant="outline" size="sm" className="mt-8 w-full">Buy More</Button>
                 </div>

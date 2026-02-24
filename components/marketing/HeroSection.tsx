@@ -83,7 +83,7 @@ export default function HeroSection() {
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
                     <Link
-                        href="/sign-up"
+                        href="/dashboard/studio"
                         id="hero-primary-cta"
                         className="relative inline-flex items-center gap-2.5 px-8 py-4 text-base font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
                         style={{
@@ -93,7 +93,7 @@ export default function HeroSection() {
                         }}
                     >
                         <Sparkles className="w-5 h-5" strokeWidth={2.5} />
-                        Start Free — 3 Credits
+                        Start Free — 10 Credits
                         <ArrowRight className="w-4 h-4" />
                     </Link>
                     <Link

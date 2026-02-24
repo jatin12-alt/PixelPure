@@ -26,6 +26,21 @@ const stats = [
 export default function DashboardPage() {
     return (
         <div className="max-w-6xl mx-auto space-y-8">
+            {/* Header with Back to Studio */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <Link 
+                    href="/dashboard/studio" 
+                    className="flex items-center gap-2 text-sm font-medium text-text-secondary hover:text-electric-cyan transition-colors group w-fit"
+                >
+                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover:-translate-x-1 rotate-45" />
+                    Back to Studio
+                </Link>
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                    <Clock className="w-3.5 h-3.5 text-text-muted" />
+                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Dashboard View</span>
+                </div>
+            </div>
+
             {/* Welcome Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
@@ -33,18 +48,15 @@ export default function DashboardPage() {
                         Welcome back, <span className="text-gradient-cyan">User</span>
                     </h1>
                     <p className="text-text-secondary mt-1">
-                        You have 3 free credits remaining for this month.
+                        Start restoring your images in the Studio.
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Link href="/dashboard/studio">
                         <Button variant="primary">
                             <Plus className="w-4 h-4 mr-2" />
-                            New Restoration
+                            Go to Studio
                         </Button>
-                    </Link>
-                    <Link href="/pricing">
-                        <Button variant="outline">Upgrade Plan</Button>
                     </Link>
                 </div>
             </div>

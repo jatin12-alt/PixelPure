@@ -37,7 +37,7 @@ model User {
   name             String?
   imageUrl         String?
   plan             Plan     @default(FREE)
-  credits          Int      @default(3)
+  credits          Int      @default(10)
   razorpayCustomerId String?  @unique
   razorpayOrderId    String?  @unique
   razorpayPaymentId  String?  @unique

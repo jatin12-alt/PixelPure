@@ -8,6 +8,7 @@ import { toast } from "sonner";
 export default function StudioPage() {
     useEffect(() => {
         document.title = "Studio | PixelPure";
+        fetchCredits();
     }, []);
 
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -15,8 +16,21 @@ export default function StudioPage() {
     const [isUploading, setIsUploading] = useState(false);
     const [restoredUrl, setRestoredUrl] = useState<string | null>(null);
     const [originalUrl, setOriginalUrl] = useState<string | null>(null);
+    const [credits, setCredits] = useState<number | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const fetchCredits = async () => {
+        try {
+            const res = await fetch("/api/user/credits");
+            if (res.ok) {
+                const data = await res.json();
+                setCredits(data.credits);
+            }
+        } catch (error) {
+            console.error("Fetch credits error:", error);
+        }
+    };
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -35,6 +49,13 @@ export default function StudioPage() {
     const handleUploadAndRestore = async () => {
         if (!originalFile) return;
 
+        if (credits !== null && credits <= 0) {
+            toast.error("Insufficient credits", {
+                description: "Please buy more credits to continue restoring images.",
+            });
+            return;
+        }
+
         setIsUploading(true);
         try {
             const formData = new FormData();
@@ -51,18 +72,28 @@ export default function StudioPage() {
             const data = await response.json();
             const secureUrl = data.secure_url;
 
-            // Apply Aggressive AI restoration filter string
-            // Cloudinary transformation URL structure: .../upload/e_gen_restore,e_improve,e_saturation:30,e_sharpen:100,q_auto/v123/public_id.jpg
-            const restored = secureUrl.replace("/upload/", "/upload/e_gen_restore,e_improve,e_saturation:30,e_sharpen:100,q_auto/");
+            // Apply Aggressive AI restoration filter string with cache busting
+            const restored = secureUrl.replace("/upload/", `/upload/e_gen_restore,e_improve,e_saturation:40,e_sharpen:100/v${Date.now()}/`);
+
+            // Deduct 1 credit
+            const creditRes = await fetch("/api/user/credits", { method: "POST" });
+            if (!creditRes.ok) {
+                if (creditRes.status === 403) {
+                    throw new Error("Insufficient credits");
+                }
+                throw new Error("Credit deduction failed");
+            }
+            const creditData = await creditRes.json();
+            setCredits(creditData.credits);
 
             setOriginalUrl(secureUrl);
             setRestoredUrl(restored);
             toast.success("Image restored successfully!", {
                 description: "Your HD version is ready for download.",
             });
-        } catch (error) {
+        } catch (error: any) {
             console.error("Restoration error:", error);
-            toast.error("Restoration failed", {
+            toast.error(error.message || "Restoration failed", {
                 description: "Please check your connection and try again.",
             });
         } finally {
@@ -271,28 +302,32 @@ export default function StudioPage() {
                 <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 animate-fade-up duration-500">
                     <div className="glass-premium rounded-2xl p-4 border border-white/10 shadow-2xl flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10">
+                            <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={selectedImage as string} alt="Thumb" className="w-full h-full object-cover" />
                             </div>
-                            <div>
-                                <p className="text-xs font-medium text-text-secondary">Ready to process</p>
+                            <div className="min-w-0">
+                                <p className="text-xs font-medium text-text-secondary truncate">Ready to process</p>
                                 <p className="text-sm font-bold text-white">1 Credit required</p>
                             </div>
                         </div>
                         <button
-                            disabled={isUploading}
+                            disabled={isUploading || (credits !== null && credits <= 0)}
                             onClick={handleUploadAndRestore}
-                            className="relative inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="relative inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                             style={{
                                 background: "linear-gradient(135deg, #00F2FF, #7C3AED)",
                                 boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
                             }}
                         >
-                            {isUploading ? (
+                            {credits !== null && credits <= 0 ? (
                                 <>
-
-
+                                    <Icons.AlertCircle className="w-4 h-4" />
+                                    No Credits
+                                </>
+                            ) : isUploading ? (
+                                <>
+                                    <Icons.Loader2 className="w-4 h-4 animate-spin" />
                                     Restoring...
                                 </>
                             ) : (

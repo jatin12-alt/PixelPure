@@ -87,8 +87,8 @@ export default function Sidebar() {
                         <span className="text-xs font-bold text-electric-cyan">FREE</span>
                     </div>
                     <div className="flex items-end gap-2">
-                        <span className="text-3xl font-black text-text-primary">3</span>
-                        <span className="text-text-muted text-sm mb-1">/ 3 remaining</span>
+                        <span className="text-3xl font-black text-text-primary">10</span>
+                        <span className="text-text-muted text-sm mb-1">/ 10 remaining</span>
                     </div>
                     <div className="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
                         <div

@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         name: `${d.first_name || ''} ${d.last_name || ''}`,
         imageUrl: d.image_url,
         plan: 'FREE',
-        credits: 3,
+        credits: 10,
         referralCode: `REF-${d.id.slice(-5)}`,
       }
     });
