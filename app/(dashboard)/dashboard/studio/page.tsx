@@ -74,8 +74,8 @@ export default function StudioPage() {
             const data = await response.json();
             const secureUrl = data.secure_url;
 
-            // Apply Advanced AI Chaining: Restore -> Upscale -> Enhance -> Improve with cache busting
-            const restored = secureUrl.replace("/upload/", `/upload/e_gen_restore/e_upscale/e_enhance/e_improve/v${Date.now()}/`);
+            // Apply 'Pro-Photography' stack: unsharp mask, contrast, vibrance, improve:neutral, best quality
+            const restored = secureUrl.replace("/upload/", `/upload/e_unsharp_mask:100/e_contrast:15/e_vibrance:20/e_improve:neutral/q_auto:best/f_auto/v${Date.now()}/`);
 
             // Deduct 1 credit
             const creditRes = await fetch("/api/user/credits", { method: "POST" });
@@ -86,6 +86,8 @@ export default function StudioPage() {
                 throw new Error("Credit deduction failed");
             }
             const creditData = await creditRes.json();
+            
+            // Instant UI update
             setCredits(creditData.credits);
             router.refresh();
 
@@ -162,26 +164,26 @@ export default function StudioPage() {
                             aspectRatio="16/9"
                             duration={3000}
                         />
-                        <div className="p-6 flex items-center justify-between bg-white/[0.02]">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl glass-cyan flex items-center justify-center">
-                                    <Bell className="w-5 h-5 text-electric-cyan" /> 
+                        <div className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/[0.02]">
+                            <div className="flex items-center gap-3 w-full sm:w-auto">
+                                <div className="w-10 h-10 rounded-xl glass-cyan flex items-center justify-center glow-cyan">
+                                    <Zap className="w-5 h-5 text-electric-cyan" />
                                 </div>
                                 <div>
-                                    <p className="text-white font-bold">Restoration Complete</p>
-                                    <p className="text-xs text-text-secondary">Generated via Generative Restore</p>
+                                    <p className="text-sm font-bold text-white">AI Restoration Complete</p>
+                                    <p className="text-xs text-text-secondary">High Fidelity · 4K Resolution</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 w-full sm:w-auto">
                                 <button
                                     onClick={removeImage}
-                                    className="px-5 py-2.5 rounded-xl text-sm font-bold text-text-secondary hover:text-white transition-colors"
+                                    className="flex-1 sm:flex-none px-5 py-3 sm:py-2.5 rounded-xl text-sm font-bold text-text-secondary hover:text-white transition-colors bg-white/5 border border-white/10"
                                 >
                                     Start New
                                 </button>
                                 <button
                                     onClick={handleDownload}
-                                    className="px-6 py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:scale-105 active:scale-95"
+                                    className="flex-1 sm:flex-none px-6 py-3 sm:py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:scale-105 active:scale-95"
                                     style={{
                                         background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
                                         boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
@@ -330,7 +332,7 @@ export default function StudioPage() {
                         <button
                             disabled={isUploading || (credits !== null && credits <= 0)}
                             onClick={handleUploadAndRestore}
-                            className="relative inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                            className="relative inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-2.5 text-sm font-bold text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             style={{
                                 background: "linear-gradient(135deg, #00F2FF, #7C3AED)",
                                 boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
