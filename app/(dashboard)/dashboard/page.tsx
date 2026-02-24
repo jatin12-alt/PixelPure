@@ -83,7 +83,7 @@ export default function DashboardPage() {
                     <div className="card-premium rounded-2xl p-12 text-center bg-surface-1 border-white/5">
                         <div className="flex flex-col items-center gap-6">
                             <div className="w-20 h-20 rounded-3xl glass flex items-center justify-center text-text-muted/20">
-                                <Icons.Image className="w-10 h-10" />
+                                <div className="w-10 h-10" />
                             </div>
                             <div className="space-y-2">
                                 <h3 className="text-xl font-bold text-white">No images yet</h3>
