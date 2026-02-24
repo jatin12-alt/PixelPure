@@ -1,5 +1,5 @@
 import React from "react";
-import { Shield, Key, Smartphone } from "lucide-react";
+import * as Icons from "lucide-react";
 
 export default function SecuritySettings() {
     return (
@@ -11,9 +11,9 @@ export default function SecuritySettings() {
             
             <div className="space-y-3">
                 {[
-                    { icon: Key, label: "Change Password", desc: "Last updated 3 months ago", action: "Update" },
-                    { icon: Smartphone, label: "Two-Factor Authentication", desc: "Add an extra layer of security", action: "Enable" },
-                    { icon: Shield, label: "Login History", desc: "View your recent activity", action: "View All" }
+                    { icon: Icons.Key, label: "Change Password", desc: "Last updated 3 months ago", action: "Update" },
+                    { icon: Icons.Smartphone, label: "Two-Factor Authentication", desc: "Add an extra layer of security", action: "Enable" },
+                    { icon: Icons.Shield, label: "Login History", desc: "View your recent activity", action: "View All" }
                 ].map((item) => (
                     <div key={item.label} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/[0.08] transition-all">
                         <div className="flex items-center gap-4">

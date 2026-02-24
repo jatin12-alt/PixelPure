@@ -1,3 +1,5 @@
+import { Loader2 } from 'lucide-react';
+
 declare module 'lucide-react' {
     import { FC, SVGProps } from 'react';
     export interface IconProps extends SVGProps<SVGSVGElement> {
@@ -52,4 +54,5 @@ declare module 'lucide-react' {
     export const RotateCcw: LucideIcon;
     export const Key: LucideIcon;
     export const Smartphone: LucideIcon;
+    export const Loader2: LucideIcon;
 }
