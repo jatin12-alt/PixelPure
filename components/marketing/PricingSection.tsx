@@ -113,8 +113,7 @@ export default function PricingSection({ fullPage }: PricingSectionProps) {
             });
 
             if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error || "Failed to create order");
+                throw new Error("Payment gateway is currently in maintenance mode. Please try again later.");
             }
 
             const order = await response.json();

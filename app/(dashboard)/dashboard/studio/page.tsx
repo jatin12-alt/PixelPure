@@ -51,8 +51,9 @@ export default function StudioPage() {
             const data = await response.json();
             const secureUrl = data.secure_url;
 
-            // Apply AI restoration filter e_gen_restore
-            const restored = secureUrl.replace("/upload/", "/upload/e_gen_restore/");
+            // Apply Aggressive AI restoration filter string
+            // Cloudinary transformation URL structure: .../upload/e_gen_restore,e_improve,e_saturation:30,e_sharpen:100,q_auto/v123/public_id.jpg
+            const restored = secureUrl.replace("/upload/", "/upload/e_gen_restore,e_improve,e_saturation:30,e_sharpen:100,q_auto/");
 
             setOriginalUrl(secureUrl);
             setRestoredUrl(restored);

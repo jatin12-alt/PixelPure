@@ -3,21 +3,21 @@ import { Sparkles, Twitter, Github, Linkedin } from "lucide-react";
 
 const footerLinks = {
     Product: [
-        { label: "Features", href: "#features" },
+        { label: "Features", href: "/#features" },
         { label: "Pricing", href: "/pricing" },
         { label: "Reviews", href: "/reviews" },
-        { label: "Changelog", href: "/changelog" },
+        { label: "Changelog", href: "/" },
     ],
     Company: [
-        { label: "About", href: "/about" },
-        { label: "Blog", href: "/blog" },
-        { label: "Careers", href: "/careers" },
-        { label: "Contact", href: "/contact" },
+        { label: "About", href: "/" },
+        { label: "Blog", href: "/" },
+        { label: "Careers", href: "/" },
+        { label: "Contact", href: "/" },
     ],
     Legal: [
-        { label: "Privacy Policy", href: "/privacy" },
-        { label: "Terms of Service", href: "/terms" },
-        { label: "Cookie Policy", href: "/cookies" },
+        { label: "Privacy Policy", href: "/" },
+        { label: "Terms of Service", href: "/" },
+        { label: "Cookie Policy", href: "/" },
     ],
 };
 
@@ -105,13 +105,13 @@ export default function Footer() {
                         © {new Date().getFullYear()} PixelPure AI. All rights reserved.
                     </p>
                     <div className="flex items-center gap-6">
-                        <Link href="/privacy" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                        <Link href="/" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
                             Privacy Policy
                         </Link>
-                        <Link href="/terms" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                        <Link href="/" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
                             Terms of Service
                         </Link>
-                        <Link href="/contact" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                        <Link href="/" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
                             Contact Support
                         </Link>
                     </div>
