@@ -259,45 +259,6 @@ export default function ScanReveal({
                     />
                 )}
             </div>
-
-            {/* ── Controls ── */}
-            <div
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full z-30 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0"
-                style={{
-                    background: "rgba(0,0,0,0.8)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    backdropFilter: "blur(12px)",
-                }}
-            >
-                <button
-                    onClick={handlePlayPause}
-                    className="w-7 h-7 flex items-center justify-center rounded-full text-white hover:text-electric-cyan transition-colors"
-                    aria-label={isPlaying ? "Pause" : "Play"}
-                >
-                    {isPlaying ? (
-                        <Pause className="w-3.5 h-3.5" />
-                    ) : (
-                        <Play className="w-3.5 h-3.5" />
-                    )}
-                </button>
-                <button
-                    onClick={handleReset}
-                    className="w-7 h-7 flex items-center justify-center rounded-full text-white hover:text-electric-cyan transition-colors"
-                    aria-label="Reset"
-                >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                </button>
-                {/* Progress bar */}
-                <div className="w-20 h-1 rounded-full bg-white/20 overflow-hidden">
-                    <div
-                        className="h-full rounded-full transition-none"
-                        style={{
-                            width: `${progress * 100}%`,
-                            background: "linear-gradient(90deg, #00F2FF, #7C3AED)",
-                        }}
-                    />
-                </div>
-            </div>
         </div>
     );
 }

@@ -3,7 +3,8 @@
 import React from "react";
 
 import Link from "next/link";
-import { Sparkles, Zap, ArrowRight, Star } from "lucide-react";
+import { Sparkles, Zap, ArrowRight, Star, LayoutDashboard } from "lucide-react";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 const floatingStats = [
     { label: "Photos Enhanced", value: "2.4M+" },
@@ -81,20 +82,37 @@ export default function HeroSection() {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                    <Link
-                        href="/sign-up"
-                        id="hero-primary-cta"
-                        className="relative inline-flex items-center gap-2.5 px-8 py-4 text-base font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
-                        style={{
-                            background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
-                            boxShadow:
-                                "0 0 30px rgba(0,242,255,0.4), 0 0 80px rgba(0,242,255,0.15)",
-                        }}
-                    >
-                        <Sparkles className="w-5 h-5" strokeWidth={2.5} />
-                        Start Free — 3 Credits
-                        <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    <SignedOut>
+                        <Link
+                            href="/sign-up"
+                            id="hero-primary-cta"
+                            className="relative inline-flex items-center gap-2.5 px-8 py-4 text-base font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+                            style={{
+                                background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
+                                boxShadow:
+                                    "0 0 30px rgba(0,242,255,0.4), 0 0 80px rgba(0,242,255,0.15)",
+                            }}
+                        >
+                            <Sparkles className="w-5 h-5" strokeWidth={2.5} />
+                            Start Free — 3 Credits
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
+                    </SignedOut>
+                    <SignedIn>
+                        <Link
+                            href="/dashboard"
+                            className="relative inline-flex items-center gap-2.5 px-8 py-4 text-base font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+                            style={{
+                                background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
+                                boxShadow:
+                                    "0 0 30px rgba(0,242,255,0.4), 0 0 80px rgba(0,242,255,0.15)",
+                            }}
+                        >
+                            <LayoutDashboard className="w-5 h-5" />
+                            Go to Dashboard
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
+                    </SignedIn>
                     <Link
                         href="#demo"
                         id="hero-secondary-cta"

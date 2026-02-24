@@ -78,9 +78,24 @@ export default function RootLayout({
     return (
         // 2. ClerkProvider se wrap kiya
         <ClerkProvider
-          appearance={{
-            baseTheme: undefined, // Yahan dark theme add kar sakte ho later
-          }}
+            appearance={{
+                variables: {
+                    colorPrimary: "#00F2FF",
+                    colorBackground: "#0D0D15",
+                    colorText: "white",
+                    colorInputBackground: "rgba(255, 255, 255, 0.05)",
+                    colorInputText: "white",
+                },
+                elements: {
+                    formButtonPrimary: "bg-gradient-to-r from-[#00F2FF] to-[#7C3AED] hover:opacity-90 transition-opacity",
+                    card: "bg-[#0D0D15] border border-white/10 backdrop-blur-xl",
+                    headerTitle: "text-white",
+                    headerSubtitle: "text-white/60",
+                    socialButtonsBlockButton: "bg-white/5 border border-white/10 hover:bg-white/10 text-white",
+                    formFieldInput: "bg-white/5 border-white/10 focus:border-[#00F2FF]/50 transition-all",
+                    footerActionLink: "text-[#00F2FF] hover:text-[#00F2FF]/80",
+                }
+            }}
         >
             <html lang="en" className={inter.variable} suppressHydrationWarning>
                 <body className="min-h-screen bg-black text-white antialiased">

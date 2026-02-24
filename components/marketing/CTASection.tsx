@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Sparkles, ArrowRight, Zap } from "lucide-react";
+import { Sparkles, ArrowRight, Zap, LayoutDashboard } from "lucide-react";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function CTASection() {
     return (
@@ -47,18 +48,34 @@ export default function CTASection() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                            <Link
-                                href="/sign-up"
-                                className="relative inline-flex items-center gap-2.5 px-8 py-4 text-lg font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105"
-                                style={{
-                                    background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
-                                    boxShadow: "0 0 30px rgba(0, 242, 255, 0.4)",
-                                }}
-                            >
-                                <Zap className="w-5 h-5" />
-                                Get Started Free
-                                <ArrowRight className="w-4 h-4" />
-                            </Link>
+                            <SignedOut>
+                                <Link
+                                    href="/sign-up"
+                                    className="relative inline-flex items-center gap-2.5 px-8 py-4 text-lg font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105"
+                                    style={{
+                                        background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
+                                        boxShadow: "0 0 30px rgba(0, 242, 255, 0.4)",
+                                    }}
+                                >
+                                    <Zap className="w-5 h-5" />
+                                    Get Started Free
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </SignedOut>
+                            <SignedIn>
+                                <Link
+                                    href="/dashboard"
+                                    className="relative inline-flex items-center gap-2.5 px-8 py-4 text-lg font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105"
+                                    style={{
+                                        background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
+                                        boxShadow: "0 0 30px rgba(0, 242, 255, 0.4)",
+                                    }}
+                                >
+                                    <LayoutDashboard className="w-5 h-5" />
+                                    Go to Dashboard
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </SignedIn>
                             <Link
                                 href="/pricing"
                                 className="px-8 py-4 text-lg font-semibold text-text-secondary hover:text-text-primary transition-colors"
