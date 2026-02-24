@@ -1,20 +1,29 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-// In routes ko protect karna hai
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/api/webhooks/clerk'
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // Naye version mein hum check karte hain ki kya route protected hai
-  if (isProtectedRoute(req)) {
-    await auth.protect(); // Yahan await zaroori hai naye Clerk version mein
+  const { userId } = await auth();
+
+  // 1. Agar user login hai aur sign-in/up page par hai, dashboard bhejo
+  if (userId && (req.nextUrl.pathname.startsWith('/sign-in') || req.nextUrl.pathname.startsWith('/sign-up'))) {
+    return NextResponse.redirect(new URL('/dashboard', req.url));
+  }
+
+  // 2. Agar public route nahi hai aur user login nahi hai, login page bhejo
+  if (!userId && !isPublicRoute(req)) {
+    return NextResponse.redirect(new URL('/sign-in', req.url));
   }
 });
 
 export const config = {
   matcher: [
-    // Isko aise hi rehne dena, ye static files ko ignore karta hai
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     '/(api|trpc)(.*)',
   ],
