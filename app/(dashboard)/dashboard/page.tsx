@@ -7,10 +7,13 @@ import {
     Sparkles,
     ArrowUpRight,
     Plus,
-    Settings
+    Settings,
+    User as UserIcon
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { currentUser } from "@clerk/nextjs/server";
+import ProfileForm from "@/components/shared/ProfileForm";
 
 export const metadata: Metadata = {
     title: "Dashboard | PixelPure",
@@ -24,9 +27,11 @@ const stats = [
     { label: "Quality Increase", value: "+400%", icon: TrendingUp, color: "purple" },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+    const user = await currentUser();
+
     return (
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto space-y-8 pb-12">
             {/* Header with Back to Studio & Settings */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
@@ -39,7 +44,7 @@ export default function DashboardPage() {
                     </Link>
                     <Link 
                         href="/dashboard/settings/profile"
-                        className="p-2 rounded-lg bg-white/5 border border-white/10 text-text-muted hover:text-electric-cyan hover:bg-white/10 transition-all"
+                        className="hidden md:flex p-2 rounded-lg bg-white/5 border border-white/10 text-text-muted hover:text-electric-cyan hover:bg-white/10 transition-all"
                         title="Manage Account"
                     >
                         <Settings className="w-4 h-4" />
@@ -47,7 +52,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
                     <Clock className="w-3.5 h-3.5 text-text-muted" />
-                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Dashboard View</span>
+                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Dashboard Overview</span>
                 </div>
             </div>
 
@@ -55,7 +60,7 @@ export default function DashboardPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-bold text-white leading-tight">
-                        Welcome back, <span className="text-gradient-cyan">User</span>
+                        Welcome back, <span className="text-gradient-cyan">{user?.firstName || "User"}</span>
                     </h1>
                     <p className="text-text-secondary mt-1">
                         Start restoring your images in the Studio.
@@ -68,6 +73,22 @@ export default function DashboardPage() {
                             Go to Studio
                         </Button>
                     </Link>
+                </div>
+            </div>
+
+            {/* Mobile Profile Merge - Visible only on mobile */}
+            <div className="block md:hidden animate-fade-in">
+                <div className="card-premium rounded-3xl p-6 border-white/10 bg-surface-1/50 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-xl glass-cyan flex items-center justify-center">
+                            <UserIcon className="w-5 h-5 text-electric-cyan" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-bold text-white leading-none">Profile Settings</h2>
+                            <p className="text-[10px] text-text-muted uppercase tracking-widest font-bold mt-1">Manage your account</p>
+                        </div>
+                    </div>
+                    <ProfileForm compact />
                 </div>
             </div>
 
@@ -105,7 +126,7 @@ export default function DashboardPage() {
                     <div className="card-premium rounded-2xl p-12 text-center bg-surface-1 border-white/5">
                         <div className="flex flex-col items-center gap-6">
                             <div className="w-20 h-20 rounded-3xl glass flex items-center justify-center text-text-muted/20">
-                                <div className="w-10 h-10" />
+                                <Sparkles className="w-10 h-10" />
                             </div>
                             <div className="space-y-2">
                                 <h3 className="text-xl font-bold text-white">No images yet</h3>
