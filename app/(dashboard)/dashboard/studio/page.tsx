@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef, ChangeEvent, MouseEvent, useEffect } from "react";
-import { Bell, Loader2, Upload, Zap, Download, Share2 } from "lucide-react";
+import { Bell, Loader2, Upload, Zap, Download, Share2, Sparkles, Image as ImageIcon, History, Maximize2, MoveHorizontal } from "lucide-react";
 import ScanReveal from "@/components/ui/ScanReveal";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function StudioPage() {
     const router = useRouter();
@@ -19,6 +20,7 @@ export default function StudioPage() {
     const [restoredUrl, setRestoredUrl] = useState<string | null>(null);
     const [originalUrl, setOriginalUrl] = useState<string | null>(null);
     const [credits, setCredits] = useState<number | null>(null);
+    const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,6 +42,11 @@ export default function StudioPage() {
             setOriginalFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
+                const img = new Image();
+                img.onload = () => {
+                    setImageDimensions({ width: img.width, height: img.height });
+                };
+                img.src = reader.result as string;
                 setSelectedImage(reader.result as string);
                 setRestoredUrl(null);
                 setOriginalUrl(null);
@@ -74,29 +81,22 @@ export default function StudioPage() {
             const data = await response.json();
             const secureUrl = data.secure_url;
 
-            // Reliable Cloudinary URL generation
             const getPublicIdWithExtension = (url: string) => {
                 const parts = url.split('/');
-                return parts[parts.length - 1]; // e.g., 'xxjzzyneigzg6j99akt3.png'
+                return parts[parts.length - 1];
             };
             const publicIdWithExt = getPublicIdWithExtension(secureUrl);
             const cloudName = "ddu3hkwmg";
 
-            // Cleanest possible URL construction with extension
             const restored = `https://res.cloudinary.com/${cloudName}/image/upload/e_improve,w_1000,q_auto,f_auto/v${Date.now()}/${publicIdWithExt}`;
-            console.log("finalRestoredUrl:", restored);
 
-            // Deduct 1 credit
             const creditRes = await fetch("/api/user/credits", { method: "POST" });
             if (!creditRes.ok) {
-                if (creditRes.status === 403) {
-                    throw new Error("You have run out of credits!");
-                }
+                if (creditRes.status === 403) throw new Error("You have run out of credits!");
                 throw new Error("Credit deduction failed");
             }
             const creditData = await creditRes.json();
             
-            // Save image to history
             await fetch("/api/images", {
                 method: "POST",
                 body: JSON.stringify({
@@ -106,45 +106,22 @@ export default function StudioPage() {
                 }),
             });
             
-            // Instant UI update
             setCredits(creditData.credits);
             router.refresh();
 
             setOriginalUrl(secureUrl);
             setRestoredUrl(restored);
-            toast.success("Image restored successfully!", {
-                description: "Your HD version is ready for download.",
-            });
+            toast.success("Image restored successfully!");
         } catch (error: any) {
             console.error("Restoration error:", error);
-            toast.error(error.message || "Restoration failed", {
-                description: "Please check your connection and try again.",
-            });
+            toast.error(error.message || "Restoration failed");
         } finally {
             setIsUploading(false);
         }
     };
 
-    const handleShare = async () => {
-        if (!restoredUrl) return;
-        try {
-            await navigator.share({
-                title: 'Restored with PixelPure',
-                text: 'Check out this amazing AI restoration!',
-                url: restoredUrl,
-            });
-            toast.success("Shared successfully!");
-        } catch (error) {
-            // Share might be cancelled or not supported
-            if ((error as Error).name !== 'AbortError') {
-                toast.error("Sharing not supported on this browser");
-            }
-        }
-    };
-
     const handleDownload = async () => {
         if (!restoredUrl) return;
-
         try {
             toast.loading("Preparing download...", { id: "download-toast" });
             const response = await fetch(restoredUrl);
@@ -159,254 +136,224 @@ export default function StudioPage() {
             window.URL.revokeObjectURL(url);
             toast.success("Download started!", { id: "download-toast" });
         } catch (error) {
-            console.error("Download error:", error);
             toast.error("Download failed", { id: "download-toast" });
         }
     };
 
     const handleChooseImage = () => {
-        if (restoredUrl) return; // Don't trigger file picker if already restored
+        if (restoredUrl) return;
         fileInputRef.current?.click();
     };
 
-    const removeImage = (e: MouseEvent) => {
-        e.stopPropagation();
+    const removeImage = () => {
         setSelectedImage(null);
         setOriginalFile(null);
         setRestoredUrl(null);
         setOriginalUrl(null);
+        setImageDimensions(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8 pb-12">
-            {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold text-gradient-cyan">AI Studio</h1>
-                <p className="text-text-secondary mt-1">
-                    Upload an image and let AI restore it to stunning quality
-                </p>
-            </div>
-
-            {/* Main Stage */}
-            <div className="space-y-6">
-                {restoredUrl && originalUrl ? (
-                    <div className="card-premium rounded-3xl overflow-hidden border border-white/10 shadow-2xl animate-fade-in">
-                        <ScanReveal
-                            beforeSrc={originalUrl}
-                            afterSrc={restoredUrl}
-                            beforeAlt="Original Image"
-                            afterAlt="AI Restored Image"
-                            aspectRatio="16/9"
-                            duration={3000}
-                        />
-                        <div className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/[0.02]">
-                            <div className="flex items-center gap-3 w-full sm:w-auto">
-                                <div className="w-10 h-10 rounded-xl glass-cyan flex items-center justify-center glow-cyan">
-                                    <Zap className="w-5 h-5 text-electric-cyan" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-white">AI Restoration Complete</p>
-                                    <p className="text-xs text-text-secondary">High Fidelity · 4K Resolution</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3 w-full sm:w-auto">
-                                <button
-                                    onClick={handleShare}
-                                    className="hidden sm:flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-text-secondary hover:text-white transition-all"
-                                    title="Share Image"
-                                >
-                                    <Share2 className="w-4 h-4" />
-                                </button>
-                                <button
-                                    onClick={removeImage}
-                                    className="flex-1 sm:flex-none px-5 py-3 sm:py-2.5 rounded-xl text-sm font-bold text-text-secondary hover:text-white transition-colors bg-white/5 border border-white/10"
-                                >
-                                    Try Another
-                                </button>
-                                <button
-                                    onClick={handleDownload}
-                                    className="flex-1 sm:flex-none px-6 py-3 sm:py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                                    style={{
-                                        background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
-                                        boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
-                                    }}
-                                >
-                                    <Download className="w-4 h-4" />
-                                    Download HD
-                                </button>
-                            </div>
-                        </div>
+        <div className="h-full flex flex-col lg:flex-row gap-6 pb-12">
+            {/* Left Sidebar: AI Filters & Enhance */}
+            <aside className="w-full lg:w-80 flex flex-col gap-6 order-2 lg:order-1">
+                <div className="card-premium rounded-3xl p-6 space-y-6 border-white/10 sticky top-6">
+                    <div className="space-y-1">
+                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-electric-cyan" />
+                            AI Filters
+                        </h2>
+                        <p className="text-xs text-text-secondary uppercase tracking-widest font-bold">Enhancement Options</p>
                     </div>
-                ) : (
-                    <div
-                        onClick={handleChooseImage}
-                        className={`card-premium rounded-3xl p-8 text-center group cursor-pointer hover:border-electric-cyan/30 transition-all duration-500 relative overflow-hidden ${selectedImage ? "min-h-[400px] flex items-center justify-center" : "min-h-[300px] flex flex-col justify-center"
-                            }`}
-                    >
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            accept="image/*"
-                            className="hidden"
-                            aria-label="Upload image"
-                        />
 
-                        {!selectedImage ? (
-                            <div className="flex flex-col items-center gap-6">
-                                <div className="w-24 h-24 rounded-2xl glass-cyan flex items-center justify-center glow-cyan transition-transform duration-500 group-hover:scale-110">
-                                    <Upload className="w-10 h-10 text-electric-cyan" strokeWidth={1.5} />
-                                </div>
-                                <div className="space-y-2">
-                                    <h2 className="text-2xl font-bold text-text-primary">
-                                        Drop your image here
-                                    </h2>
-                                    <p className="text-text-secondary text-base">
-                                        Supports JPG, PNG, WebP up to 20MB
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={handleChooseImage}
-                                    className="relative inline-flex items-center gap-2 px-8 py-4 text-base font-bold text-black rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95"
-                                    style={{
-                                        background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
-                                        boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
-                                    }}
-                                >
-                                    <Zap className="w-4 h-4" />
-                                    Choose Image
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="relative w-full h-full min-h-[400px] flex items-center justify-center animate-fade-in duration-500">
-                                <div className="relative max-w-full max-h-[500px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={selectedImage as string}
-                                        alt="Preview"
-                                        className="max-w-full max-h-[500px] object-contain"
-                                    />
-                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <p className="text-white font-bold px-4 py-2 bg-black/60 rounded-full backdrop-blur-md border border-white/20">
-                                            Change Image
-                                        </p>
+                    <div className="space-y-4">
+                        {[
+                            { id: 'face', label: 'Face Enhance', icon: Zap },
+                            { id: 'bg', label: 'Background Enhance', icon: ImageIcon },
+                            { id: 'denoise', label: 'Remove Noise', icon: Bell },
+                            { id: 'upscale', label: '4K Upscale', icon: Maximize2 },
+                        ].map((filter) => (
+                            <div key={filter.id} className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-all group cursor-pointer">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-electric-cyan/10 transition-colors">
+                                        <filter.icon className="w-4 h-4 text-text-secondary group-hover:text-electric-cyan" />
                                     </div>
+                                    <span className="text-sm font-bold text-text-secondary group-hover:text-white">{filter.label}</span>
                                 </div>
-                                <button
-                                    aria-label="Remove image"
-                                    onClick={removeImage}
-                                    className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-red-500/80 transition-all duration-300 z-10"
-                                >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
+                                <div className="w-10 h-5 bg-white/10 rounded-full relative p-1 cursor-pointer">
+                                    <div className="w-3 h-3 bg-white/20 rounded-full" />
+                                </div>
                             </div>
-                        )}
+                        ))}
                     </div>
-                )}
-            </div>
 
-            {/* Enhancement Options */}
-            {!restoredUrl && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {[
-                        {
-                            icon: Zap,
-                            title: "Face Restore",
-                            desc: "Enhance facial features and details",
-                            color: "cyan",
-                        },
-                        {
-                            icon: Zap,
-                            title: "Enhance Now",
-                            desc: "Apply all enhancements to your image",
-                            color: "cyan",
-                        },
-                        {
-                            icon: Loader2,
-                            title: "4x Upscale",
-                            desc: "Increase resolution dramatically",
-                            color: "purple",
-                        },
-                        {
-                            icon: Upload,
-                            title: "Denoise",
-                            desc: "Remove grain and noise artifacts",
-                            color: "cyan",
-                        },
-                    ].map((option) => (
-                        <div key={option.title} className="card-premium rounded-2xl p-6 cursor-pointer group hover:bg-white/[0.03] transition-all">
-                            <div
-                                className={`w-12 h-12 rounded-xl ${option.color === "cyan" ? "glass-cyan" : "glass-purple"
-                                    } flex items-center justify-center mb-4 transition-transform group-hover:scale-110`}
-                            >
-                                <option.icon
-                                    className={`w-6 h-6 ${option.color === "cyan" ? "text-electric-cyan" : "text-neon-purple"
-                                        }`}
-                                />
-                            </div>
-                            <h3 className="font-bold text-text-primary text-lg">{option.title}</h3>
-                            <p className="text-text-secondary text-sm mt-2 leading-relaxed">{option.desc}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* Action Bar (Only visible when image is selected and not yet restored) */}
-            {selectedImage && !restoredUrl && (
-                <div className="fixed bottom-8 left-0 right-0 px-4 z-50 animate-fade-up duration-500">
-                    <div className="max-w-xl mx-auto glass-premium rounded-2xl p-4 border border-white/10 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 w-full sm:w-auto">
-                            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 flex-shrink-0 shadow-lg">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={selectedImage as string} alt="Thumb" className="w-full h-full object-cover" />
-                            </div>
-                            <div className="min-w-0 flex-1 sm:flex-initial">
-                                <p className="text-xs font-bold text-electric-cyan uppercase tracking-wider mb-0.5">Ready to process</p>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                    <p className="text-sm font-black text-white whitespace-nowrap">1 Credit required</p>
-                                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10">
-                                        <Zap className="w-2.5 h-2.5 text-electric-cyan" />
-                                        <span className="text-[10px] font-bold text-text-muted">
-                                            {credits ?? 0} left
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="pt-4 space-y-4">
+                        <div className="flex items-center justify-between text-xs px-1">
+                            <span className="text-text-secondary font-bold uppercase">Credit Cost</span>
+                            <span className="text-electric-cyan font-black">1 CREDIT</span>
                         </div>
                         <button
-                            disabled={isUploading || (credits !== null && credits <= 0)}
+                            disabled={!selectedImage || isUploading || (credits !== null && credits <= 0)}
                             onClick={handleUploadAndRestore}
-                            className="relative inline-flex items-center justify-center gap-2 px-8 py-4 sm:py-3 text-sm font-black text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto group"
+                            className="w-full relative inline-flex items-center justify-center gap-3 px-8 py-5 text-base font-black text-black rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group"
                             style={{
                                 background: "linear-gradient(135deg, #00F2FF, #7C3AED)",
                                 boxShadow: "0 0 25px rgba(0, 242, 255, 0.4)",
                             }}
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
-                            {credits !== null && credits <= 0 ? (
+                            {isUploading ? (
                                 <>
-                                    <Bell className="w-4 h-4" />
-                                    No Credits
-                                </>
-                            ) : isUploading ? (
-                                <>
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                    Restoring...
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Processing...
                                 </>
                             ) : (
                                 <>
-                                    <Zap className="w-4 h-4 fill-current" />
+                                    <Zap className="w-5 h-5 fill-current" />
                                     Enhance Now
                                 </>
                             )}
                         </button>
+                        {credits !== null && credits <= 0 && (
+                            <p className="text-center text-[10px] text-red-400 font-bold uppercase animate-pulse">Insufficient Credits</p>
+                        )}
                     </div>
                 </div>
-            )}
+            </aside>
+
+            {/* Center Workspace: Comparison Slider */}
+            <main className="flex-1 flex flex-col gap-6 order-1 lg:order-2 min-w-0">
+                <div className="flex-1 card-premium rounded-[2.5rem] border-white/10 overflow-hidden flex flex-col min-h-[500px] lg:min-h-[600px] relative bg-pitch-black/50">
+                    {!selectedImage ? (
+                        <div 
+                            onClick={handleChooseImage}
+                            className="flex-1 flex flex-col items-center justify-center p-12 text-center group cursor-pointer transition-all duration-500"
+                        >
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                accept="image/*"
+                                className="hidden"
+                                title="Upload an image"
+                                aria-label="Upload an image"
+                                placeholder="Choose an image file"
+                            />
+                            <div className="w-24 h-24 rounded-[2rem] glass-cyan flex items-center justify-center glow-cyan transition-transform duration-500 group-hover:scale-110 mb-8">
+                                <Upload className="w-10 h-10 text-electric-cyan" strokeWidth={1.5} />
+                            </div>
+                            <h2 className="text-3xl font-black text-white mb-3">Drop image to start</h2>
+                            <p className="text-text-secondary text-lg max-w-sm">Supports JPG, PNG, WebP up to 20MB</p>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Labels Header */}
+                            <div className="flex items-center justify-between px-8 py-4 bg-white/[0.02] border-b border-white/5">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] font-black tracking-widest text-text-muted uppercase">Before</span>
+                                    <div className="h-px w-8 bg-white/10" />
+                                </div>
+                                {restoredUrl && (
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-px w-8 bg-electric-cyan/30" />
+                                        <span className="text-[10px] font-black tracking-widest text-electric-cyan uppercase">After</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Slider / Preview Area */}
+                            <div className="flex-1 relative p-4 lg:p-8 flex items-center justify-center min-h-0">
+                                {restoredUrl && originalUrl ? (
+                                    <div className="w-full h-full max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/10 animate-fade-in">
+                                        <ScanReveal
+                                            beforeSrc={originalUrl}
+                                            afterSrc={restoredUrl}
+                                            aspectRatio="16/9"
+                                            duration={3000}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="relative max-w-4xl max-h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl animate-fade-in">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img src={selectedImage} alt="Preview" className="max-w-full max-h-[500px] object-contain" />
+                                        <button onClick={removeImage} title="Remove image" aria-label="Remove image" className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-red-500/80 transition-all z-10">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Workspace Footer */}
+                            <div className="px-8 py-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between flex-wrap gap-4">
+                                {restoredUrl && (
+                                    <div className="flex items-center gap-2 text-text-secondary animate-pulse">
+                                        <MoveHorizontal className="w-4 h-4" />
+                                        <span className="text-xs font-bold uppercase tracking-wider">Drag slider to compare</span>
+                                    </div>
+                                )}
+                                {imageDimensions && (
+                                    <div className="flex items-center gap-3 ml-auto">
+                                        <div className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-text-muted">
+                                            {imageDimensions.width} × {imageDimensions.height} PX
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </main>
+
+            {/* Right Sidebar: Actions & History */}
+            <aside className="w-full lg:w-72 flex flex-col gap-6 order-3">
+                {/* Actions */}
+                <div className="card-premium rounded-3xl p-6 space-y-6 border-white/10">
+                    <div className="space-y-1">
+                        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                            <Download className="w-4 h-4 text-neon-purple" />
+                            Export
+                        </h2>
+                        <p className="text-[10px] text-text-secondary uppercase tracking-widest font-bold">Save your results</p>
+                    </div>
+
+                    <div className="space-y-3">
+                        <button
+                            disabled={!restoredUrl}
+                            onClick={handleDownload}
+                            className="w-full py-4 rounded-2xl bg-white text-black font-black text-sm transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-30 disabled:grayscale"
+                        >
+                            Download HD
+                        </button>
+                        <p className="text-[10px] text-center text-text-muted font-bold">PRO Tip: No watermark on HD export</p>
+                    </div>
+
+                    <div className="flex gap-2">
+                        <button disabled={!restoredUrl} onClick={() => toast("Share feature coming soon!")} className="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-white/10 disabled:opacity-30">
+                            <Share2 className="w-3.5 h-3.5" />
+                            Share
+                        </button>
+                        <button onClick={removeImage} className="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-text-secondary font-bold text-xs flex items-center justify-center gap-2 hover:bg-white/10">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                {/* Mini History Placeholder */}
+                <div className="flex-1 card-premium rounded-3xl p-6 border-white/10 flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-black text-text-muted uppercase tracking-widest flex items-center gap-2">
+                            <History className="w-3.5 h-3.5" />
+                            Recent
+                        </h3>
+                        <Link href="/dashboard/gallery" className="text-[10px] font-bold text-electric-cyan hover:underline">View All</Link>
+                    </div>
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-dashed border-white/10">
+                        <ImageIcon className="w-8 h-8 text-white/5 mb-2" />
+                        <p className="text-[10px] text-text-muted font-bold uppercase leading-tight">Your recent<br/>images appear here</p>
+                    </div>
+                </div>
+            </aside>
         </div>
     );
 }
-
