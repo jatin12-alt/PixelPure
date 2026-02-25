@@ -27,7 +27,9 @@ export default function SecuritySettings() {
             {show2FAModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
                     <div className="w-full max-w-md bg-surface-2 border border-white/10 rounded-[2rem] p-8 shadow-2xl relative animate-scale-in">
-                        <button 
+                        <button
+                            aria-label="Close modal"
+                            title="Close modal"
                             onClick={() => setShow2FAModal(false)}
                             className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/5 transition-colors"
                         >
