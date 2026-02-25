@@ -5,19 +5,19 @@ const footerLinks = {
     Product: [
         { label: "Features", href: "/#features" },
         { label: "Pricing", href: "/pricing" },
-        { label: "Reviews", href: "/reviews" },
+        { label: "Reviews", href: "/#testimonials" },
         { label: "Changelog", href: "/" },
     ],
     Company: [
-        { label: "About", href: "/" },
+        { label: "About", href: "/about" },
         { label: "Blog", href: "/" },
         { label: "Careers", href: "/" },
-        { label: "Contact", href: "/" },
+        { label: "Contact", href: "/about" },
     ],
     Legal: [
-        { label: "Privacy Policy", href: "/" },
-        { label: "Terms of Service", href: "/" },
-        { label: "Cookie Policy", href: "/" },
+        { label: "Privacy Policy", href: "/privacy" },
+        { label: "Terms of Service", href: "/terms" },
+        { label: "Cookie Policy", href: "/privacy" },
     ],
 };
 
@@ -105,13 +105,13 @@ export default function Footer() {
                         © {new Date().getFullYear()} PixelPure AI. All rights reserved.
                     </p>
                     <div className="flex items-center gap-6">
-                        <Link href="/" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                        <Link href="/privacy" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
                             Privacy Policy
                         </Link>
-                        <Link href="/" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                        <Link href="/terms" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
                             Terms of Service
                         </Link>
-                        <Link href="/" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
+                        <Link href="/about" className="text-text-muted hover:text-text-secondary text-xs transition-colors">
                             Contact Support
                         </Link>
                     </div>

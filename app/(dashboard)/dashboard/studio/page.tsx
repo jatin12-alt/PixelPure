@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, ChangeEvent, MouseEvent, useEffect } from "react";
-import { Bell, Loader2, Upload, Zap } from "lucide-react";
+import { Bell, Loader2, Upload, Zap, Download, Share2 } from "lucide-react";
 import ScanReveal from "@/components/ui/ScanReveal";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -87,6 +87,16 @@ export default function StudioPage() {
             }
             const creditData = await creditRes.json();
             
+            // Save image to history
+            await fetch("/api/images", {
+                method: "POST",
+                body: JSON.stringify({
+                    originalUrl: secureUrl,
+                    enhancedUrl: restored,
+                    enhancementType: "pro-photography",
+                }),
+            });
+            
             // Instant UI update
             setCredits(creditData.credits);
             router.refresh();
@@ -103,6 +113,23 @@ export default function StudioPage() {
             });
         } finally {
             setIsUploading(false);
+        }
+    };
+
+    const handleShare = async () => {
+        if (!restoredUrl) return;
+        try {
+            await navigator.share({
+                title: 'Restored with PixelPure',
+                text: 'Check out this amazing AI restoration!',
+                url: restoredUrl,
+            });
+            toast.success("Shared successfully!");
+        } catch (error) {
+            // Share might be cancelled or not supported
+            if ((error as Error).name !== 'AbortError') {
+                toast.error("Sharing not supported on this browser");
+            }
         }
     };
 
@@ -176,19 +203,27 @@ export default function StudioPage() {
                             </div>
                             <div className="flex items-center gap-3 w-full sm:w-auto">
                                 <button
+                                    onClick={handleShare}
+                                    className="hidden sm:flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-text-secondary hover:text-white transition-all"
+                                    title="Share Image"
+                                >
+                                    <Share2 className="w-4 h-4" />
+                                </button>
+                                <button
                                     onClick={removeImage}
                                     className="flex-1 sm:flex-none px-5 py-3 sm:py-2.5 rounded-xl text-sm font-bold text-text-secondary hover:text-white transition-colors bg-white/5 border border-white/10"
                                 >
-                                    Start New
+                                    Try Another
                                 </button>
                                 <button
                                     onClick={handleDownload}
-                                    className="flex-1 sm:flex-none px-6 py-3 sm:py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:scale-105 active:scale-95"
+                                    className="flex-1 sm:flex-none px-6 py-3 sm:py-2.5 rounded-xl text-sm font-bold text-black transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
                                     style={{
                                         background: "linear-gradient(135deg, #00F2FF, #0EA5E9)",
                                         boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
                                     }}
                                 >
+                                    <Download className="w-4 h-4" />
                                     Download HD
                                 </button>
                             </div>
@@ -312,32 +347,36 @@ export default function StudioPage() {
 
             {/* Action Bar (Only visible when image is selected and not yet restored) */}
             {selectedImage && !restoredUrl && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50 animate-fade-up duration-500">
-                    <div className="glass-premium rounded-2xl p-4 border border-white/10 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-3 w-full sm:w-auto">
-                            <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
+                <div className="fixed bottom-8 left-0 right-0 px-4 z-50 animate-fade-up duration-500">
+                    <div className="max-w-xl mx-auto glass-premium rounded-2xl p-4 border border-white/10 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4 w-full sm:w-auto">
+                            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 flex-shrink-0 shadow-lg">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={selectedImage as string} alt="Thumb" className="w-full h-full object-cover" />
                             </div>
                             <div className="min-w-0 flex-1 sm:flex-initial">
-                                <p className="text-xs font-medium text-text-secondary truncate">Ready to process</p>
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                    <p className="text-sm font-bold text-white whitespace-nowrap">1 Credit required</p>
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-text-muted">
-                                        {credits ?? 0} left
-                                    </span>
+                                <p className="text-xs font-bold text-electric-cyan uppercase tracking-wider mb-0.5">Ready to process</p>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <p className="text-sm font-black text-white whitespace-nowrap">1 Credit required</p>
+                                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/10">
+                                        <Zap className="w-2.5 h-2.5 text-electric-cyan" />
+                                        <span className="text-[10px] font-bold text-text-muted">
+                                            {credits ?? 0} left
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <button
                             disabled={isUploading || (credits !== null && credits <= 0)}
                             onClick={handleUploadAndRestore}
-                            className="relative inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-2.5 text-sm font-bold text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                            className="relative inline-flex items-center justify-center gap-2 px-8 py-4 sm:py-3 text-sm font-black text-black rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.02] sm:hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto group"
                             style={{
                                 background: "linear-gradient(135deg, #00F2FF, #7C3AED)",
-                                boxShadow: "0 0 20px rgba(0, 242, 255, 0.4)",
+                                boxShadow: "0 0 25px rgba(0, 242, 255, 0.4)",
                             }}
                         >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
                             {credits !== null && credits <= 0 ? (
                                 <>
                                     <Bell className="w-4 h-4" />
@@ -350,7 +389,7 @@ export default function StudioPage() {
                                 </>
                             ) : (
                                 <>
-                                        <Zap className="w-4 h-4" />
+                                    <Zap className="w-4 h-4 fill-current" />
                                     Enhance Now
                                 </>
                             )}
