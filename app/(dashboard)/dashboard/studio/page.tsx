@@ -74,8 +74,17 @@ export default function StudioPage() {
             const data = await response.json();
             const secureUrl = data.secure_url;
 
-            // Apply 'Pro-Photography' stack: unsharp mask, contrast, vibrance, improve:neutral, best quality
-            const restored = secureUrl.replace("/upload/", `/upload/e_unsharp_mask:100/e_contrast:15/e_vibrance:20/e_improve:neutral/q_auto:best/f_auto/v${Date.now()}/`);
+            // Reliable Cloudinary URL generation
+            const getPublicIdWithExtension = (url: string) => {
+                const parts = url.split('/');
+                return parts[parts.length - 1]; // e.g., 'xxjzzyneigzg6j99akt3.png'
+            };
+            const publicIdWithExt = getPublicIdWithExtension(secureUrl);
+            const cloudName = "ddu3hkwmg";
+
+            // Cleanest possible URL construction with extension
+            const restored = `https://res.cloudinary.com/${cloudName}/image/upload/e_improve,w_1000,q_auto,f_auto/v${Date.now()}/${publicIdWithExt}`;
+            console.log("finalRestoredUrl:", restored);
 
             // Deduct 1 credit
             const creditRes = await fetch("/api/user/credits", { method: "POST" });
