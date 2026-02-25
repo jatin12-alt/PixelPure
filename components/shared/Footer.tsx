@@ -3,15 +3,15 @@ import { Sparkles, Twitter, Github, Linkedin, Loader2 } from "lucide-react";
 
 const footerLinks = {
     Product: [
-        { label: "Features", href: "/#features" },
+        { label: "Features", href: "/features" },
         { label: "Pricing", href: "/pricing" },
-        { label: "Reviews", href: "/#testimonials" },
-        { label: "Changelog", href: "/" },
+        { label: "Reviews", href: "/reviews" },
+        { label: "Changelog", href: "/changelog" },
     ],
     Company: [
         { label: "About", href: "/about" },
-        { label: "Blog", href: "/" },
-        { label: "Careers", href: "/" },
+        { label: "Blog", href: "/about" },
+        { label: "Careers", href: "/about" },
         { label: "Contact", href: "/about" },
     ],
     Legal: [

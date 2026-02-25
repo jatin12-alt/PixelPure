@@ -6,7 +6,8 @@ import {
     Clock,
     Sparkles,
     ArrowUpRight,
-    Plus
+    Plus,
+    Settings
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -26,15 +27,24 @@ const stats = [
 export default function DashboardPage() {
     return (
         <div className="max-w-6xl mx-auto space-y-8">
-            {/* Header with Back to Studio */}
+            {/* Header with Back to Studio & Settings */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <Link 
-                    href="/dashboard/studio" 
-                    className="flex items-center gap-2 text-sm font-medium text-text-secondary hover:text-electric-cyan transition-colors group w-fit"
-                >
-                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover:-translate-x-1 rotate-45" />
-                    Back to Studio
-                </Link>
+                <div className="flex items-center gap-4">
+                    <Link 
+                        href="/dashboard/studio" 
+                        className="flex items-center gap-2 text-sm font-medium text-text-secondary hover:text-electric-cyan transition-colors group w-fit"
+                    >
+                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:-translate-x-1 rotate-45" />
+                        Back to Studio
+                    </Link>
+                    <Link 
+                        href="/dashboard/settings/profile"
+                        className="p-2 rounded-lg bg-white/5 border border-white/10 text-text-muted hover:text-electric-cyan hover:bg-white/10 transition-all"
+                        title="Manage Account"
+                    >
+                        <Settings className="w-4 h-4" />
+                    </Link>
+                </div>
                 <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
                     <Clock className="w-3.5 h-3.5 text-text-muted" />
                     <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Dashboard View</span>

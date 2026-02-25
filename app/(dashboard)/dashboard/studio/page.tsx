@@ -21,8 +21,35 @@ export default function StudioPage() {
     const [originalUrl, setOriginalUrl] = useState<string | null>(null);
     const [credits, setCredits] = useState<number | null>(null);
     const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+    const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set(['face', 'bg']));
+    const [recentImage, setRecentImage] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const fetchRecent = async () => {
+            try {
+                const res = await fetch("/api/images");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.length > 0) setRecentImage(data[0].enhancedUrl);
+                }
+            } catch (error) {
+                console.error("Fetch recent image error:", error);
+            }
+        };
+        fetchRecent();
+    }, []);
+
+    const toggleFilter = (filterId: string) => {
+        const newFilters = new Set(activeFilters);
+        if (newFilters.has(filterId)) {
+            newFilters.delete(filterId);
+        } else {
+            newFilters.add(filterId);
+        }
+        setActiveFilters(newFilters);
+    };
 
     const fetchCredits = async () => {
         try {
@@ -154,6 +181,19 @@ export default function StudioPage() {
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
+    const handleShare = async () => {
+        if (!restoredUrl) return;
+        try {
+            await navigator.clipboard.writeText(restoredUrl);
+            toast.success("Link Copied to Clipboard!", {
+                description: "You can now share this HD image with anyone.",
+                icon: <Share2 className="w-4 h-4 text-electric-cyan" />,
+            });
+        } catch (error) {
+            toast.error("Failed to copy link");
+        }
+    };
+
     return (
         <div className="h-full flex flex-col lg:flex-row gap-6 pb-12">
             {/* Left Sidebar: AI Filters & Enhance */}
@@ -174,15 +214,33 @@ export default function StudioPage() {
                             { id: 'denoise', label: 'Remove Noise', icon: Bell },
                             { id: 'upscale', label: '4K Upscale', icon: Maximize2 },
                         ].map((filter) => (
-                            <div key={filter.id} className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-all group cursor-pointer">
+                            <div 
+                                key={filter.id} 
+                                onClick={() => toggleFilter(filter.id)}
+                                className={`flex items-center justify-between p-3 rounded-2xl border transition-all group cursor-pointer ${
+                                    activeFilters.has(filter.id) 
+                                    ? "bg-electric-cyan/10 border-electric-cyan/30" 
+                                    : "bg-white/5 border-white/5 hover:border-white/10"
+                                }`}
+                            >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-electric-cyan/10 transition-colors">
-                                        <filter.icon className="w-4 h-4 text-text-secondary group-hover:text-electric-cyan" />
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                                        activeFilters.has(filter.id) ? "bg-electric-cyan/20" : "bg-white/5 group-hover:bg-electric-cyan/10"
+                                    }`}>
+                                        <filter.icon className={`w-4 h-4 transition-colors ${
+                                            activeFilters.has(filter.id) ? "text-electric-cyan" : "text-text-secondary group-hover:text-electric-cyan"
+                                        }`} />
                                     </div>
-                                    <span className="text-sm font-bold text-text-secondary group-hover:text-white">{filter.label}</span>
+                                    <span className={`text-sm font-bold transition-colors ${
+                                        activeFilters.has(filter.id) ? "text-white" : "text-text-secondary group-hover:text-white"
+                                    }`}>{filter.label}</span>
                                 </div>
-                                <div className="w-10 h-5 bg-white/10 rounded-full relative p-1 cursor-pointer">
-                                    <div className="w-3 h-3 bg-white/20 rounded-full" />
+                                <div className={`w-10 h-5 rounded-full relative p-1 transition-colors ${
+                                    activeFilters.has(filter.id) ? "bg-electric-cyan" : "bg-white/10"
+                                }`}>
+                                    <div className={`w-3 h-3 bg-white rounded-full transition-all ${
+                                        activeFilters.has(filter.id) ? "translate-x-5" : "translate-x-0"
+                                    }`} />
                                 </div>
                             </div>
                         ))}
@@ -329,7 +387,7 @@ export default function StudioPage() {
                     </div>
 
                     <div className="flex gap-2">
-                        <button disabled={!restoredUrl} onClick={() => toast("Share feature coming soon!")} className="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-white/10 disabled:opacity-30">
+                        <button disabled={!restoredUrl} onClick={handleShare} className="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-2 hover:bg-white/10 disabled:opacity-30">
                             <Share2 className="w-3.5 h-3.5" />
                             Share
                         </button>
@@ -348,9 +406,21 @@ export default function StudioPage() {
                         </h3>
                         <Link href="/dashboard/gallery" className="text-[10px] font-bold text-electric-cyan hover:underline">View All</Link>
                     </div>
-                    <div className="flex-1 flex flex-col items-center justify-center text-center p-4 rounded-2xl border border-dashed border-white/10">
-                        <ImageIcon className="w-8 h-8 text-white/5 mb-2" />
-                        <p className="text-[10px] text-text-muted font-bold uppercase leading-tight">Your recent<br/>images appear here</p>
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-2 rounded-2xl border border-dashed border-white/10 overflow-hidden relative group">
+                        {recentImage ? (
+                            <>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={recentImage} alt="Recent" className="w-full h-full object-cover rounded-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-100 group-hover:opacity-0 transition-opacity">
+                                    <p className="text-[8px] font-black text-white uppercase tracking-tighter">Last Processed</p>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <ImageIcon className="w-8 h-8 text-white/5 mb-2" />
+                                <p className="text-[10px] text-text-muted font-bold uppercase leading-tight">Your recent<br/>images appear here</p>
+                            </>
+                        )}
                     </div>
                 </div>
             </aside>

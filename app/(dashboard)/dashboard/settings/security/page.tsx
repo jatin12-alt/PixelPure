@@ -1,9 +1,69 @@
-import React from "react";
-import { Shield, Lock, Fingerprint, History, ArrowRight, Smartphone } from "lucide-react";
+"use client";
+
+import React, { useState } from "react";
+import { Shield, Lock, Fingerprint, History, ArrowRight, Smartphone, Mail, X } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
 
 export default function SecuritySettings() {
+    const [show2FAModal, setShow2FAModal] = useState(false);
+    const [backupEmail, setBackupEmail] = useState("");
+
+    const handleEnable2FA = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!backupEmail) {
+            toast.error("Please enter a valid email address");
+            return;
+        }
+        toast.success("2FA setup initiated!", {
+            description: `Verification link sent to ${backupEmail}`
+        });
+        setShow2FAModal(false);
+    };
+
     return (
         <div className="space-y-8 animate-fade-in">
+            {/* 2FA Modal */}
+            {show2FAModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="w-full max-w-md bg-surface-2 border border-white/10 rounded-[2rem] p-8 shadow-2xl relative animate-scale-in">
+                        <button 
+                            onClick={() => setShow2FAModal(false)}
+                            className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/5 transition-colors"
+                        >
+                            <X className="w-5 h-5 text-text-muted" />
+                        </button>
+
+                        <div className="flex flex-col items-center text-center gap-6">
+                            <div className="w-16 h-16 rounded-2xl bg-neon-purple/10 flex items-center justify-center border border-neon-purple/20">
+                                <Mail className="w-8 h-8 text-neon-purple" />
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="text-2xl font-bold text-white">Enable 2FA</h3>
+                                <p className="text-text-secondary text-sm">Enter a backup email address to receive your 2FA verification codes.</p>
+                            </div>
+
+                            <form onSubmit={handleEnable2FA} className="w-full space-y-4">
+                                <input 
+                                    type="email" 
+                                    required
+                                    placeholder="backup@example.com"
+                                    value={backupEmail}
+                                    onChange={(e) => setBackupEmail(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neon-purple/50 transition-all"
+                                />
+                                <button 
+                                    type="submit"
+                                    className="w-full py-4 bg-neon-purple text-white font-black rounded-xl hover:opacity-90 transition-all shadow-lg shadow-neon-purple/20"
+                                >
+                                    Send Verification
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-xl font-bold text-white">Security Settings</h2>
@@ -27,10 +87,12 @@ export default function SecuritySettings() {
                             <p className="text-xs text-text-secondary">Last changed 3 months ago</p>
                         </div>
                     </div>
-                    <button className="w-full sm:w-auto px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white text-sm font-bold rounded-xl transition-all border border-white/5 flex items-center justify-center gap-2">
-                        Change Password
-                        <ArrowRight className="w-4 h-4" />
-                    </button>
+                    <Link href="/dashboard/settings/profile">
+                        <button className="w-full sm:w-auto px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white text-sm font-bold rounded-xl transition-all border border-white/5 flex items-center justify-center gap-2">
+                            Change Password
+                            <ArrowRight className="w-4 h-4" />
+                        </button>
+                    </Link>
                 </div>
 
                 {/* Two-Factor Authentication */}
@@ -44,7 +106,10 @@ export default function SecuritySettings() {
                             <p className="text-xs text-text-secondary">Add an extra layer of security to your account</p>
                         </div>
                     </div>
-                    <button className="w-full sm:w-auto px-6 py-2.5 bg-neon-purple/20 hover:bg-neon-purple/30 text-neon-purple text-sm font-bold rounded-xl transition-all border border-neon-purple/20">
+                    <button 
+                        onClick={() => setShow2FAModal(true)}
+                        className="w-full sm:w-auto px-6 py-2.5 bg-neon-purple/20 hover:bg-neon-purple/30 text-neon-purple text-sm font-bold rounded-xl transition-all border border-neon-purple/20"
+                    >
                         Enable 2FA
                     </button>
                 </div>

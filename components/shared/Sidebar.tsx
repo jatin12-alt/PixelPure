@@ -14,7 +14,10 @@ import {
     Loader2,
     Gift,
     ArrowLeft,
+    LogOut,
+    User as UserIcon,
 } from "lucide-react";
+import { useUser, SignOutButton } from "@clerk/nextjs";
 
 const navItems = [
     {
@@ -28,7 +31,7 @@ const navItems = [
     {
         section: "Account",
         items: [
-            { href: "/dashboard/settings", icon: Settings, label: "Settings", badge: null },
+            { href: "/dashboard/settings/profile", icon: Settings, label: "Settings", badge: null },
             { href: "/pricing", icon: CreditCard, label: "Upgrade", badge: "PRO" },
             {
                 href: "/dashboard/referrals",
@@ -42,7 +45,9 @@ const navItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const { user, isLoaded } = useUser();
     const [credits, setCredits] = useState<number | null>(null);
+    const [showUserMenu, setShowUserMenu] = useState(false);
 
     useEffect(() => {
         const fetchCredits = async () => {
@@ -60,7 +65,7 @@ export default function Sidebar() {
     }, [pathname]); // Refresh when navigating
 
     return (
-        <aside className="hidden md:flex w-64 flex-col h-full border-r border-white/5 bg-surface-1">
+        <aside className="hidden md:flex w-64 flex-col h-full border-r border-white/5 bg-surface-1 relative">
             {/* Logo */}
             <div className="flex items-center gap-2.5 px-6 py-5 border-b border-white/5">
                 <Link href="/" className="flex items-center gap-2.5 group">
@@ -220,18 +225,45 @@ export default function Sidebar() {
                     </div>
                 </div>
 
-                {/* User Profile Mini */}
-                <div className="mt-3 flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-all cursor-pointer group">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-black"
-                        style={{ background: "linear-gradient(135deg, #00F2FF, #7C3AED)" }}
+                {/* User Profile Mini & Menu */}
+                <div className="relative">
+                    {showUserMenu && (
+                        <div className="absolute bottom-full left-0 w-full mb-2 bg-surface-2 border border-white/10 rounded-2xl shadow-2xl p-2 z-50 animate-fade-up">
+                            <Link 
+                                href="/dashboard/settings/profile"
+                                onClick={() => setShowUserMenu(false)}
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:text-white hover:bg-white/5 transition-all"
+                            >
+                                <UserIcon className="w-4 h-4" />
+                                Manage Account
+                            </Link>
+                            <SignOutButton>
+                                <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all">
+                                    <LogOut className="w-4 h-4" />
+                                    Logout
+                                </button>
+                            </SignOutButton>
+                        </div>
+                    )}
+                    <div 
+                        onClick={() => setShowUserMenu(!showUserMenu)}
+                        className="mt-3 flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-all cursor-pointer group"
                     >
-                        U
+                        {isLoaded && user?.imageUrl ? (
+                            <img src={user.imageUrl} alt="Profile" className="w-8 h-8 rounded-full border border-white/10" />
+                        ) : (
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-black"
+                                style={{ background: "linear-gradient(135deg, #00F2FF, #7C3AED)" }}
+                            >
+                                {user?.firstName?.charAt(0) || 'U'}
+                            </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-text-primary truncate">{user?.firstName || 'User'}</p>
+                            <p className="text-xs text-text-muted truncate uppercase tracking-tighter font-bold">{credits === 999999 ? 'Business' : credits && credits > 150 ? 'Pro' : 'Free Plan'}</p>
+                        </div>
+                        <Settings className={`w-3.5 h-3.5 text-text-muted group-hover:text-text-secondary transition-all ${showUserMenu ? 'rotate-90 text-electric-cyan' : ''}`} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-text-primary truncate">User</p>
-                        <p className="text-xs text-text-muted truncate">Free Plan</p>
-                    </div>
-                    <Settings className="w-3.5 h-3.5 text-text-muted group-hover:text-text-secondary transition-colors" />
                 </div>
             </div>
         </aside>

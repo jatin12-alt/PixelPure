@@ -116,7 +116,16 @@ export default function Navbar() {
                                     Dashboard
                                 </Link>
                                 <div className="pl-2 border-l border-white/10 ml-2">
-                                    <UserButton />
+                                    <UserButton 
+                                        appearance={{
+                                            elements: {
+                                                userButtonPopoverCard: "bg-[#0D0D15] border border-white/10 shadow-2xl",
+                                                userButtonPopoverActionButton: "hover:bg-white/5 transition-all",
+                                                userButtonPopoverActionButtonText: "text-white",
+                                                userButtonPopoverFooter: "hidden"
+                                            }
+                                        }}
+                                    />
                                 </div>
                             </SignedIn>
                         </div>

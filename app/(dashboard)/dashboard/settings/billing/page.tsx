@@ -1,5 +1,6 @@
 import React from "react";
 import { CreditCard, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function BillingSettings() {
     return (
@@ -17,12 +18,14 @@ export default function BillingSettings() {
                         </div>
                         <div>
                             <h3 className="font-bold text-white">Free Plan</h3>
-                            <p className="text-xs text-text-secondary">3 credits remaining this month</p>
+                            <p className="text-xs text-text-secondary">Basic AI features enabled</p>
                         </div>
                     </div>
-                    <button className="px-4 py-2 bg-electric-cyan text-black font-bold text-sm rounded-lg hover:opacity-90 transition-all">
-                        Upgrade Pro
-                    </button>
+                    <Link href="/pricing">
+                        <button className="px-4 py-2 bg-electric-cyan text-black font-bold text-sm rounded-lg hover:opacity-90 transition-all">
+                            Upgrade Pro
+                        </button>
+                    </Link>
                 </div>
             </div>
 

@@ -206,47 +206,30 @@ export default function ScanReveal({
                     </div>
                 </div>
 
-                {/* ── Laser Line ── */}
+                {/* ── Neural Shimmer Swipe ── */}
                 <div
                     className="absolute top-0 bottom-0 pointer-events-none z-20"
                     style={{
                         left: laserPosition,
-                        width: "4px",
+                        width: "80px",
                         transform: "translateX(-50%)",
                     }}
                 >
-                    {/* Main laser beam */}
+                    {/* Soft Shimmer Gradient */}
                     <div
                         className="absolute inset-0"
                         style={{
-                            background: "linear-gradient(180deg, transparent 0%, rgba(0,242,255,0.7) 15%, #00F2FF 40%, rgba(0,242,255,1) 50%, rgba(0,242,255,0.8) 60%, rgba(0,242,255,0.7) 85%, transparent 100%)",
-                            boxShadow:
-                                "0 0 6px 2px rgba(0, 242, 255, 0.9), 0 0 20px 6px rgba(0, 242, 255, 0.5), 0 0 50px 15px rgba(0, 242, 255, 0.2)",
+                            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.05) 60%, transparent)",
+                            backdropFilter: "blur(2px)",
                         }}
                     />
 
-                    {/* Horizontal flare at center */}
+                    {/* Bright Center Line */}
                     <div
-                        className="absolute top-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px]"
                         style={{
-                            left: "-30px",
-                            right: "-30px",
-                            height: "2px",
-                            background: "radial-gradient(ellipse, rgba(0,242,255,0.8) 0%, transparent 70%)",
-                            filter: "blur(1px)",
-                        }}
-                    />
-
-                    {/* Scan orb — glowing dot at laser tip */}
-                    <div
-                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                            width: "12px",
-                            height: "12px",
-                            borderRadius: "50%",
-                            background: "#00F2FF",
-                            boxShadow:
-                                "0 0 10px 3px rgba(0,242,255,0.8), 0 0 30px 10px rgba(0,242,255,0.4)",
+                            background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.8), transparent)",
+                            boxShadow: "0 0 15px rgba(255,255,255,0.5)",
                         }}
                     />
                 </div>
